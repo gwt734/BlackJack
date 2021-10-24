@@ -1,5 +1,9 @@
-print("Hello world")
+# Programme principal où est effectuée l'exécution
 
-#okay ça marche
-# j'ai réussi à récupérer ta modif et toi?
-# oui parfait tout va bien
+def main():
+    pass
+    # Fonction à completer
+
+
+if __name__ == '__main__':
+    main()
