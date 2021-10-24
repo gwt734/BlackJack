@@ -1,6 +1,7 @@
 # Programme principal où est effectuée l'exécution
 
 def main():
+    print('Hello world')
     pass
     # Fonction à completer
 
