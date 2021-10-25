@@ -1,9 +1,15 @@
 # Fichier où stocker toute les fonctions nécessaires au jeu
 
+import Constantes.py
+
 # A1 - Paquet de cartes
 def paquet():
-    pass
-    # Fonction à completer
+    pile=[]
+    for i in range(len(couleur)):
+        for j in range(len(valeur)):
+            pile+=[valeur[j] + " de " + couleur[i]]
+    return pile
+    # Fonction à tester
 
 
 def valeur_carte(carte):
