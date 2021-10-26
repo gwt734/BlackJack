@@ -2,9 +2,11 @@
 
 import Constantes
 import random
+from statistics import mean
 
 
-# A1 - Paquet de cartes
+#########################          A1 - Paquet de cartes          #########################
+
 def paquet():
     pile = []
     for i in range(len(Constantes.COULEUR)):  # pour chaque couleur (4)
@@ -34,15 +36,15 @@ def init_pioche(n):
     # Fonction à tester
 
 
-def pioche_carte(pioche,x=1):
-    retour=[]
-    for i in range(x):     # autant de fois que de cartes à piocher
-        retour+=pioche.pop(i)   # enlève la carte de la pioche et la met dans la liste de retour
+def pioche_carte(pioche, x=1):
+    retour = []
+    for i in range(x):  # autant de fois que de cartes à piocher
+        retour += pioche.pop(i)  # enlève la carte de la pioche et la met dans la liste de retour
     return retour
     # Fonction à tester
 
 
-###################        A2 - Joueurs et scores          ###############################
+#########################          A2 - Joueurs et scores          #########################
 
 def init_joueurs(n):
     pass
@@ -64,7 +66,8 @@ def gagnant(scores):
     # Fonction à completer
 
 
-# B1 - Tour d'un joueur
+#########################          B1 - Tour d'un joueur          #########################
+
 def continuer():
     return input_protege("Souhaitez-vous continuer?", str, "list", (), ["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
@@ -80,7 +83,8 @@ def tour_joueur(j, joueurs, pioche, scores):
     # Fonction à tester
 
 
-# B2 - Une partie complète
+#########################          B2 - Une partie complète          #########################
+
 def tour_complet(joueurs, pioche, scores):
     for j in joueurs:
         tour_joueur(j, joueurs, pioche, scores)
@@ -99,7 +103,37 @@ def partie_complete(joueurs, pioche, scores, victoires):
     # Fonction à tester
 
 
-# E - Diverses fonctions supplémentaires
+#########################          C - Intelligence artificielle          #########################
+
+def moyenne_paquet(pile):
+    valeurs = []
+    for carte in pile:
+        valeurs.append(valeur_carte(carte))
+    return mean(valeurs)
+    # Fonction à tester
+
+
+def choix_intelligent(score, pile, risque=False, securite=False):
+    estimation = moyenne_paquet(pile)
+    if (risque == securite == False) or (risque == securite == True):  # si l'algorithme doit jouer de manière optimale
+        if estimation <= 21 - score:
+            pass  # il faut continuer
+        else:
+            pass  # il faut arreter
+    elif risque:  # si l'algorithme doit prendre des risques
+        if estimation / 2 <= 21 - score:  # souvent vrai, risque de perdre
+            pass  # il faut continuer
+        else:
+            pass  # il faut arreter
+    else:  # si l'algorithme ne doit pas prendre de risques
+        if estimation * 2 <= 21 - score:  # rarement vrai, peu de chances de perdre
+            pass  # il faut continuer
+        else:
+            pass  # il faut arreter
+
+
+#########################          E - Diverses fonctions supplémentaires          #########################
+
 def input_protege(question, type_attendu, type_ensemble, intervalle_reponses_possibles, liste_reponses_possibles):
     """
     question=question to ask the user
