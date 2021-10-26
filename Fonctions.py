@@ -1,24 +1,36 @@
 # Fichier où stocker toute les fonctions nécessaires au jeu
 
-import Constantes.py
+import Constantes
+import random
+
 
 # A1 - Paquet de cartes
 def paquet():
-    pile=[]
-    for i in range(len(couleur)):
-        for j in range(len(valeur)):
-            pile+=[valeur[j] + " de " + couleur[i]]
+    pile = []
+    for i in range(len(Constantes.COULEUR)):  # pour chaque couleur (4)
+        for j in range(len(Constantes.VALEUR)):  # pour chaque valeur de carte (13)
+            pile += [Constantes.VALEUR[j] + " de " + Constantes.COULEUR[i]]  # ajoute la carte à la pile
     return pile
     # Fonction à tester
 
 
 def valeur_carte(carte):
-    pass
-    # Fonction à completer
+    if carte[0] == "A":  # si la carte est un As
+        return input_protege(question, int, "list", [1, 11], [1, 11])  # demande la valeur souhaitée (1 ou 11)
+    elif carte[0] == "V" or carte[0] == "D" or carte[0] == "R":  # si la carte est une figure
+        return 10
+    else:  # si la carte est un nombre entre 2 et 10
+        return int(carte[0])
+    # Fonction à tester
 
 
 def init_pioche(n):
-    pass
+    pioche = paquet() * n  # crée le paquet non mélangé
+    pioche2 = []
+    for i in range(len(pioche)):  # pour chaque élément de la pioche
+        indice = random.randint(0, 52 * n - i - 1)  # prend un indice aléatoire appartenant à la pioche
+        pioche2 += pioche.pop(indice)  # enlève l'élément en question de la première pioche et le met dans la deuxième
+    return pioche2
     # Fonction à completer
 
 
@@ -50,7 +62,8 @@ def gagnant(scores):
 
 # B1 - Tour d'un joueur
 def continuer():
-    return input_protege("Souhaitez-vous continuer?", str, "list", (), ["oui", "Oui", "OUI", "non", "Non", "NON"]) in ["oui", "Oui", "OUI"]
+    return input_protege("Souhaitez-vous continuer?", str, "list", (), ["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
+        "oui", "Oui", "OUI"]
 
 
 def tour_joueur(j, joueurs, pioche, scores):
@@ -95,12 +108,13 @@ def input_protege(question, type_attendu, type_ensemble, intervalle_reponses_pos
     type_verifie = False
     valeur_verifie = False
 
-    while not(type_verifie and valeur_verifie):
+    while not (type_verifie and valeur_verifie):
         try:
             saisie_modifie = type_attendu(saisie)
 
         except:
-            print("Votre saisie n'est pas du type ", type_attendu.__name__, ". Merci de saisir un ", type_attendu.__name__)
+            print("Votre saisie n'est pas du type ", type_attendu.__name__, ". Merci de saisir un ",
+                  type_attendu.__name__)
             saisie = input()
 
         else:
@@ -109,18 +123,18 @@ def input_protege(question, type_attendu, type_ensemble, intervalle_reponses_pos
                 if saisie_modifie in range(intervalle_reponses_possibles[0], intervalle_reponses_possibles[1]):
                     valeur_verifie = True
                 else:
-                    print("Votre saisie n'est pas comprise dans l'intervalle : ", intervalle_reponses_possibles, ". Merci de saisir une valeur comprise dans : ", intervalle_reponses_possibles)
+                    print("Votre saisie n'est pas comprise dans l'intervalle : ", intervalle_reponses_possibles,
+                          ". Merci de saisir une valeur comprise dans : ", intervalle_reponses_possibles)
                     print(valeur_verifie)
                     saisie = input()
             elif type_ensemble == "list":
                 if saisie_modifie in liste_reponses_possibles:
                     valeur_verifie = True
                 else:
-                    print("Votre saisie n'est pas comprise dans la liste : ", liste_reponses_possibles, ". Merci de saisir une valeur comprise dans : ", liste_reponses_possibles)
+                    print("Votre saisie n'est pas comprise dans la liste : ", liste_reponses_possibles,
+                          ". Merci de saisir une valeur comprise dans : ", liste_reponses_possibles)
                     saisie = input()
             else:
                 valeur_verifie = True
             print(valeur_verifie)
     return saisie_modifie
-
-
