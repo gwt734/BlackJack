@@ -31,15 +31,19 @@ def init_pioche(n):
         indice = random.randint(0, 52 * n - i - 1)  # prend un indice aléatoire appartenant à la pioche
         pioche2 += pioche.pop(indice)  # enlève l'élément en question de la première pioche et le met dans la deuxième
     return pioche2
-    # Fonction à completer
+    # Fonction à tester
 
 
-def pioche_carte():
-    pass
-    # Fonction à completer
+def pioche_carte(pioche,x=1):
+    retour=[]
+    for i in range(x):     # autant de fois que de cartes à piocher
+        retour+=pioche.pop(i)   # enlève la carte de la pioche et la met dans la liste de retour
+    return retour
+    # Fonction à tester
 
 
-# A2 - Joueurs et scores
+###################        A2 - Joueurs et scores          ###############################
+
 def init_joueurs(n):
     pass
     # Fonction à completer
