@@ -28,11 +28,8 @@ def valeur_carte(carte):
 
 def init_pioche(n):
     pioche = paquet() * n  # crée le paquet non mélangé
-    pioche2 = []
-    for i in range(len(pioche)):  # pour chaque élément de la pioche
-        indice = random.randint(0, 52 * n - i - 1)  # prend un indice aléatoire appartenant à la pioche
-        pioche2 += pioche.pop(indice)  # enlève l'élément en question de la première pioche et le met dans la deuxième
-    return pioche2
+    random.shuffle(pioche)
+    return pioche
     # Fonction à tester
 
 
@@ -83,13 +80,15 @@ def gagnant(scores):
 
 def continuer():
     return input_protege("Souhaitez-vous continuer?", str, "list", (), ["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
-        "oui", "Oui", "OUI"]
+        "oui", "Oui", "OUI"]    # Ici cette fonction est appele pour rester dans la partie et pour refaire une partie donc laquestion n'est pas precise donc il pourrait etre judicieux de la duppiquer ou de mettre en argument la question
 
 
 def tour_joueur(j, joueurs, pioche, scores):
+    print(j, " : votre score est : ", scores[j])
+    print(pioche)
     veut_continuer = continuer()
     if veut_continuer:
-        scores[j] += valeur_carte(pioche[0])
+        scores[j] += valeur_carte(pioche_carte(pioche))
     if not veut_continuer or scores[j] > 21:
         joueurs.remove(j)
     # Fonction à tester
@@ -146,7 +145,7 @@ def choix_intelligent(score, pile, risque=False, securite=False):
 
 #########################          E - Diverses fonctions supplémentaires          #########################
 
-def input_protege(question, type_attendu, type_ensemble="none", intervalle_reponses_possibles=(), liste_reponses_possibles=[]):
+def input_protege(question, type_attendu=str, type_ensemble="none", intervalle_reponses_possibles=(), liste_reponses_possibles=[]):
     """
     question=question to ask the user
     input_type=type of the input needed (example: int, float, str)
@@ -175,7 +174,6 @@ def input_protege(question, type_attendu, type_ensemble="none", intervalle_repon
                 else:
                     print("Votre saisie n'est pas comprise dans l'intervalle : ", intervalle_reponses_possibles,
                           ". Merci de saisir une valeur comprise dans : ", intervalle_reponses_possibles)
-                    print(valeur_verifie)
                     saisie = input()
             elif type_ensemble == "list":
                 if saisie_modifie in liste_reponses_possibles:
