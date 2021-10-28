@@ -18,7 +18,7 @@ def paquet():
 
 def valeur_carte(carte):
     if carte[0] == "A":  # si la carte est un As
-        return input_protege(question, int, "list", [1, 11], [1, 11])  # demande la valeur souhaitée (1 ou 11)
+        return input_protege("Quelle valeur choisissez vous pour l'as", int, "list", [1, 11], [1, 11])  # demande la valeur souhaitée (1 ou 11)
     elif carte[0] == "V" or carte[0] == "D" or carte[0] == "R":  # si la carte est une figure
         return 10
     else:  # si la carte est un nombre entre 2 et 10
@@ -47,23 +47,36 @@ def pioche_carte(pioche, x=1):
 #########################          A2 - Joueurs et scores          #########################
 
 def init_joueurs(n):
-    pass
-    # Fonction à completer
+    joueurs = []
+    for i in range(n):  # Pour chaque joueur on demande àa l'utilisateur le nom
+        joueurs.append(input_protege("Quel est le nom du joueur " + str(i+1), str))
+    return joueurs
 
 
-def init_scores(joueurs, v):
-    pass
-    # Fonction à completer
+def init_scores(joueurs, v=0):
+    scores = {}
+    for i in joueurs:   # Pour chaque joueur
+        scores[i] = v   # On assigne la valeur v au score du joueur actuel
+    return scores
 
 
-def premier_tour(joueurs):
-    pass
-    # Fonction à completer
+def premier_tour(joueurs, pioche):
+    scores = init_scores(joueurs)   # On initialise les scores
+    for i in scores.keys():     # On parcours les joueurs
+        for j in range(2):      # On répète deux fois (car on doit piocher deux cartes)
+            scores[i] += valeur_carte(pioche_carte(pioche))     # On augmente le score de la valeur d'une carte piochée
+    return scores
+    # Ici chaque joueur pioche deux cartes à la fois mais il peut etre préférable que chaque joueur pioche une première carte puis que le cycle se repete, il faudrait alors juste inverser les deux for
 
 
 def gagnant(scores):
-    pass
-    # Fonction à completer
+    maximum = 0
+    for i in scores.keys():     # On parcours les joueurs
+        if maximum < scores[i] <= 21:
+            maximum = scores[i]
+            joueur_gagnant = i
+    return joueur_gagnant
+    # Fonction à tester
 
 
 #########################          B1 - Tour d'un joueur          #########################
@@ -79,7 +92,6 @@ def tour_joueur(j, joueurs, pioche, scores):
         scores[j] += valeur_carte(pioche[0])
     if not veut_continuer or scores[j] > 21:
         joueurs.remove(j)
-
     # Fonction à tester
 
 
@@ -134,7 +146,7 @@ def choix_intelligent(score, pile, risque=False, securite=False):
 
 #########################          E - Diverses fonctions supplémentaires          #########################
 
-def input_protege(question, type_attendu, type_ensemble, intervalle_reponses_possibles, liste_reponses_possibles):
+def input_protege(question, type_attendu, type_ensemble="none", intervalle_reponses_possibles=(), liste_reponses_possibles=[]):
     """
     question=question to ask the user
     input_type=type of the input needed (example: int, float, str)
