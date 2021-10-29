@@ -46,7 +46,7 @@ def pioche_carte(pioche, x=1):
 def init_joueurs(n):
     joueurs = []
     for i in range(n):  # Pour chaque joueur on demande àa l'utilisateur le nom
-        joueurs.append(input_protege("Quel est le nom du joueur " + str(i+1), str))
+        joueurs.append(input_protege("Quel est le nom du joueur " + str(i+1)))
     return joueurs
 
 
@@ -60,8 +60,7 @@ def init_scores(joueurs, v=0):
 def premier_tour(joueurs, pioche):
     scores = init_scores(joueurs)   # On initialise les scores
     for i in scores.keys():     # On parcours les joueurs
-        for j in range(2):      # On répète deux fois (car on doit piocher deux cartes)
-            scores[i] += valeur_carte(pioche_carte(pioche))     # On augmente le score de la valeur d'une carte piochée
+        scores[i] += valeur_carte(pioche_carte(pioche), x=2)     # On augmente le score de la valeur d'une carte piochée
     return scores
     # Ici chaque joueur pioche deux cartes à la fois mais il peut etre préférable que chaque joueur pioche une première carte puis que le cycle se repete, il faudrait alors juste inverser les deux for
 
@@ -79,12 +78,12 @@ def gagnant(scores):
 #########################          B1 - Tour d'un joueur          #########################
 
 def continuer_tour():
-    return input_protege("Souhaitez-vous piocher une autre carte? ", type_ensemble="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
+    return input_protege("Souhaitez-vous piocher une autre carte? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
 def continuer_partie():
-    return input_protege("Souhaitez-vous commencer une autre partie? ", type_ensemble="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
+    return input_protege("Souhaitez-vous commencer une autre partie? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
@@ -150,13 +149,13 @@ def choix_intelligent(score, pile, risque=False, securite=False):
 
 #########################          E - Diverses fonctions supplémentaires          #########################
 
-def input_protege(question, type_attendu=str, type_ensemble="none", intervalle_reponses_possibles=(), liste_reponses_possibles=[]):
+def input_protege(question, type_attendu=str, range_or_list="none", intervalle_reponses_possibles=(), liste_reponses_possibles=[]):
     """
-    question=question to ask the user
-    input_type=type of the input needed (example: int, float, str)
-    range_or_list= wether the input needs to be part of a range or a list, "range", "list" or "none" (actually anything other than "range" or "list" will result in no value check
-    range= range the input needs to be part of (example: (4, 8) here 8 is not included while 4 is) leave as empty if not applicable
-    list= list the input needs to be part of (example: [4, 8] or list1 ) leave as empty if not applicable
+    question = question à poser (str)
+    type_attendu = type de variable attendu (str par defaut)
+    range_or_list = "range" pour un intervalle, "list" pour une liste de valeur, rien pour ignorer la condition
+    intervalle_reponses_possibles = à completer pour un test d'intervalle
+    liste_reponses_possibles = à completer pour un test de liste
     """
     saisie = input(question)
     type_verifie = False
