@@ -81,27 +81,35 @@ def continuer_tour():
         "oui", "Oui", "OUI"]
 
 
+def init_continuer_tour(joueurs_partie):
+    encore = {}
+    for joueur in joueurs_partie:  # Pour chaque joueur
+        encore[joueur] = True
+    return encore
+
+
 def continuer_partie():
     return input_protege("Souhaitez-vous commencer une autre partie? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
-def tour_joueur(j, joueurs_partie, pioche, scores):
+def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     print(pioche) # Pour le débogage
-    veut_continuer = continuer_tour()   # On demande au joueur s'il veut continuer
-    if veut_continuer:
-        scores[j] += valeur_carte(pioche_carte(pioche)) # On augmente le score de la valeur de la carte piochée
-    if not veut_continuer or scores[j] > 21:    # si le joueur ne veut/peut plus jouer
+    encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
+    if encore[j]:   # si le joueur veut continuer
+        scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
+    if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j)   # On l'élimine
     # Fonction à tester
 
 
 #########################          B2 - Une partie complète          #########################
 
-def tour_complet(joueurs, pioche, scores):  #Pour chaque joueur encore dans la partie on lui fait un tour
+def tour_complet(joueurs, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
     for j in joueurs:
-        tour_joueur(j, joueurs, pioche, scores)
+        if encore[j]:
+            tour_joueur(j, joueurs, pioche, scores, encore)
     # Fonction à tester
 
 
@@ -110,9 +118,9 @@ def partie_finie(joueurs_partie, scores):  # Vrai si tout les joueurs ont été 
     # Fonction à tester
 
 
-def partie_complete(joueurs, pioche, scores, victoires):
+def partie_complete(joueurs, pioche, scores, victoires, encore):
     while not partie_finie(joueurs, scores):    # Tant que  la partie n'est pas finie on repete un tour complet
-        tour_complet(joueurs, pioche, scores)
+        tour_complet(joueurs, pioche, scores, encore)
     victoires[gagnant(scores)] += 1     # A la fin de la partie on incremente le score du gagnant
     # Fonction à tester
 
