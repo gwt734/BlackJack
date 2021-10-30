@@ -8,14 +8,21 @@ def main():
     veut_rejouer = True
     victoires = Fonctions.init_scores(joueurs)
     while veut_rejouer:
-        joueurs_partie = joueurs
+        joueurs_partie = list(joueurs)
         pioche = Fonctions.init_pioche(nb_joueurs)
-        print(pioche)
+        print(pioche)  # pour le débogage
         scores = Fonctions.premier_tour(joueurs_partie, pioche)
-        print(pioche)
+        print(pioche)  # pour le débogage
         Fonctions.partie_complete(joueurs_partie, pioche, scores, victoires)
         print(victoires)
-        veut_rejouer = Fonctions.continuer()
+        veut_rejouer = Fonctions.continuer_partie()
+    # détermination du gagnant global
+    nb_victoires=0
+    for item in victoires.items():
+        if item[1] > nb_victoires:
+            vainqueur = item[0]
+            nb_victoires = item[1]
+    print("Le grand gagnant est", vainqueur, "avec", nb_victoires, "victoires !")
 
     # Fonction à tester
 
