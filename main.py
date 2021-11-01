@@ -12,7 +12,6 @@ def main():
         pioche = Fonctions.init_pioche(nb_joueurs)
         print(pioche)  # pour le débogage
         encore = Fonctions.init_continuer_tour(joueurs_partie)
-        print(encore)  # pour le débogage
         scores = Fonctions.premier_tour(joueurs_partie, pioche)
         print(pioche)  # pour le débogage
         Fonctions.partie_complete(joueurs_partie, pioche, scores, victoires, encore)

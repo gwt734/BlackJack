@@ -101,26 +101,32 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
         scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j)   # On l'élimine
+    print(scores)  # pour le débogage
+    """if scores[j] == 21:  # si le joueur atteint 21 points, on arrête la partie immédiatement
+        partie_finie(joueurs_partie, scores, encore)"""
     # Fonction à tester
 
 
 #########################          B2 - Une partie complète          #########################
 
-def tour_complet(joueurs, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
-    for j in joueurs:
-        if encore[j]:
-            tour_joueur(j, joueurs, pioche, scores, encore)
+def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
+    for j in joueurs_partie:
+        if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
+            tour_joueur(j, joueurs_partie, pioche, scores, encore)
     # Fonction à tester
 
 
-def partie_finie(joueurs_partie, scores):  # Vrai si tout les joueurs ont été éliminés ou si un des joueurs à 21 points
-    return (21 in scores.values()) or (joueurs_partie == [])
+def partie_finie(joueurs_partie, scores, encore):
+    """renvoie True si un joueur a 21 points, si il ne reste plus qu'un joueur en dessous de 21 points
+    ou si aucun joueur ne veut continuer à piocher"""
+    return (21 in scores.values()) or (len(joueurs_partie) == 1) or not(True in encore.values())
     # Fonction à tester
 
 
 def partie_complete(joueurs, pioche, scores, victoires, encore):
-    while not partie_finie(joueurs, scores):    # Tant que  la partie n'est pas finie on repete un tour complet
+    while not partie_finie(joueurs, scores, encore):    # Tant que  la partie n'est pas finie on repete un tour complet
         tour_complet(joueurs, pioche, scores, encore)
+        print(encore)  # pour le débogage
     victoires[gagnant(scores)] += 1     # A la fin de la partie on incremente le score du gagnant
     # Fonction à tester
 
