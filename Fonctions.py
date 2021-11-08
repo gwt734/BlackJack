@@ -28,7 +28,6 @@ def init_pioche(n):
     pioche = paquet() * n  # crée le paquet non mélangé
     random.shuffle(pioche)
     return pioche
-    # Fonction à tester
 
 
 def pioche_carte(pioche):  # pioche une seule carte
@@ -37,7 +36,6 @@ def pioche_carte(pioche):  # pioche une seule carte
         retour=pioche.pop(0)  # enlève la carte de la pioche et la met dans la liste de retour
     return retour[]"""
     return pioche.pop(0)
-    # Fonction à tester
 
 
 #########################          A2 - Joueurs et scores          #########################
@@ -102,9 +100,6 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j)   # On l'élimine
     print(scores)  # pour le débogage
-    """if scores[j] == 21:  # si le joueur atteint 21 points, on arrête la partie immédiatement
-        partie_finie(joueurs_partie, scores, encore)"""
-    # Fonction à tester
 
 
 #########################          B2 - Une partie complète          #########################
@@ -113,14 +108,12 @@ def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur 
     for j in joueurs_partie:
         if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
-    # Fonction à tester
 
 
 def partie_finie(joueurs_partie, scores, encore):
     """renvoie True si un joueur a 21 points, si il ne reste plus qu'un joueur en dessous de 21 points
     ou si aucun joueur ne veut continuer à piocher"""
     return (21 in scores.values()) or (len(joueurs_partie) == 1) or not(True in encore.values())
-    # Fonction à tester
 
 
 def partie_complete(joueurs, pioche, scores, victoires, encore):
@@ -128,7 +121,6 @@ def partie_complete(joueurs, pioche, scores, victoires, encore):
         tour_complet(joueurs, pioche, scores, encore)
         print(encore)  # pour le débogage
     victoires[gagnant(scores)] += 1     # A la fin de la partie on incremente le score du gagnant
-    # Fonction à tester
 
 
 #########################          C - Intelligence artificielle          #########################
