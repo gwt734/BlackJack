@@ -42,7 +42,7 @@ def pioche_carte(pioche):  # pioche une seule carte
 
 def init_joueurs(n):
     joueurs = []
-    for i in range(n):  # Pour chaque joueur on demande àa l'utilisateur le nom
+    for i in range(n):  # Pour chaque joueur on demande à l'utilisateur le nom
         joueurs.append(input_protege("Quel est le nom du joueur " + str(i+1)))
     return joueurs
 
@@ -113,7 +113,7 @@ def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur 
 def partie_finie(joueurs_partie, scores, encore):
     """renvoie True si un joueur a 21 points, si il ne reste plus qu'un joueur en dessous de 21 points
     ou si aucun joueur ne veut continuer à piocher"""
-    return (21 in scores.values()) or (len(joueurs_partie) == 1) or not(True in encore.values())
+    return (21 in scores.values()) or (len(joueurs_partie) == 1) or (not(True in encore.values()))
 
 
 def partie_complete(joueurs, pioche, scores, victoires, encore):
