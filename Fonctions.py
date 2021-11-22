@@ -17,7 +17,7 @@ def paquet():
 
 def valeur_carte(carte):
     if carte[0] == "A":  # si la carte est un As
-        return input_protege("Quelle valeur choisissez vous pour l'as", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
+        return input_protege("Quelle valeur choisissez vous pour l'as ?  ", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
     elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
         return 10
     else:  # si la carte est un nombre entre 2 et 9
@@ -43,7 +43,7 @@ def pioche_carte(pioche):  # pioche une seule carte
 def init_joueurs(n):
     joueurs = []
     for i in range(n):  # Pour chaque joueur on demande à l'utilisateur le nom
-        joueurs.append(input_protege("Quel est le nom du joueur " + str(i+1)))
+        joueurs.append(input_protege("Quel est le nom du joueur " + str(i+1)+" ?  "))
     return joueurs
 
 
@@ -75,7 +75,7 @@ def gagnant(scores):
 #########################          B1 - Tour d'un joueur          #########################
 
 def continuer_tour():
-    return input_protege("Souhaitez-vous piocher une autre carte? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
+    return input_protege("Souhaitez-vous piocher une autre carte ?  ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
@@ -87,17 +87,18 @@ def init_continuer_tour(joueurs_partie):
 
 
 def continuer_partie():
-    return input_protege("Souhaitez-vous commencer une autre partie? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
+    return input_protege("Souhaitez-vous commencer une autre partie ?  ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
 def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
-    print(pioche) # Pour le débogage
+    print(pioche[:4]) # Pour le débogage
     encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
     if encore[j]:   # si le joueur veut continuer
         scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
     if scores[j] > 21:    # si le joueur dépasse 21 points
+        encore[j] = False
         joueurs_partie.remove(j)   # On l'élimine
     print(scores)  # pour le débogage
 
@@ -108,6 +109,7 @@ def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur 
     for j in joueurs_partie:
         if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
+            print("*\n**\n*")
 
 
 def partie_finie(joueurs_partie, scores, encore):
@@ -130,12 +132,11 @@ def moyenne_paquet(pioche):
     for carte in pioche:
         valeurs.append(valeur_carte(carte))
     return mean(valeurs)
-    # Fonction à tester
 
 
 def choix_intelligent(score, pioche, risque=False, securite=False):
     estimation = moyenne_paquet(pioche)
-    if (risque == securite == False) or (risque == securite == True):  # si l'algorithme doit jouer de manière optimale
+    if (not(risque) and not(securite)) or (risque and securite):  # si l'algorithme doit jouer de manière optimale
         if estimation <= 21 - score:
             pass  # il faut continuer
         else:
