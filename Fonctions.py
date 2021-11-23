@@ -98,7 +98,6 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     if encore[j]:   # si le joueur veut continuer
         scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
     if scores[j] > 21:    # si le joueur dépasse 21 points
-        encore[j] = False
         joueurs_partie.remove(j)   # On l'élimine
     print(scores)  # pour le débogage
 
@@ -106,8 +105,8 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
 #########################          B2 - Une partie complète          #########################
 
 def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
-    for j in joueurs_partie:
-        if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
+    for j in scores.keys():
+        if encore[j] and not(partie_finie(joueurs_partie, scores, encore)) and scores[j]<21:  # ou egal
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
             print("*\n**\n*")
 
