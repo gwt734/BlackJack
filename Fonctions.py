@@ -109,7 +109,12 @@ def continuer_partie():
 def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     print(pioche[:4]) # Pour le débogage
-    encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
+    if j.upper() == "IA":
+        encore[j] = choix_intelligent(scores, pioche)
+    elif j.upper() == "BOB":
+        encore[j] = choix_booste()
+    else:
+        encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
     if encore[j]:   # si le joueur veut continuer
         scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
     if scores[j] > 21:    # si le joueur dépasse 21 points
@@ -154,19 +159,23 @@ def choix_intelligent(score, pioche, risque=False, securite=False):
     estimation = moyenne_paquet(pioche)
     if (not(risque) and not(securite)) or (risque and securite):  # si l'algorithme doit jouer de manière optimale
         if estimation <= 21 - score:
-            pass  # il faut continuer
+            return True  # il faut continuer
         else:
-            pass  # il faut arreter
+            return False  # il faut arreter
     elif risque:  # si l'algorithme doit prendre des risques
         if estimation / 2 <= 21 - score:  # souvent vrai, risque de perdre
-            pass  # il faut continuer
+            return True # il faut continuer
         else:
-            pass  # il faut arreter
+            return False # il faut arreter
     else:  # si l'algorithme ne doit pas prendre de risques
         if estimation * 2 <= 21 - score:  # rarement vrai, peu de chances de perdre
-            pass  # il faut continuer
+            return True  # il faut continuer
         else:
-            pass  # il faut arreter
+            return False  # il faut arreter
+
+
+def choix_booste():  # El famoso BOB
+    pass
 
 
 #########################          E - Diverses fonctions supplémentaires          #########################
