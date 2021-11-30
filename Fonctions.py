@@ -55,12 +55,21 @@ def init_scores(joueurs, v=0):
 
 
 def premier_tour(joueurs_partie, pioche):
-    scores = init_scores(joueurs_partie)   # On initialise les scores
-    for tour in range(2):   # on fait 2 tours de distribution de cartes (souvent le cas dans les jeux de carte)
-        for i in scores.keys():     # On parcours les joueurs
-            scores[i] += valeur_carte(pioche_carte(pioche))     # On augmente le score de la valeur d'une carte piochée
+    kopecs = init_scores(joueurs_partie, v=100)
+    mises = init_scores(joueurs_partie, v=100)
+    scores = init_scores(joueurs_partie)
+    for j in joueurs_partie:   #
+        jeu = []
+        for tour in range(2):     # 
+            jeu += pioche_carte(pioche)
+        print(j, "a pioché", jeu, "au premier tour")
+        valeur_premier_tour(jeu, j, scores, kopecs)
     return scores
 
+def valeur_premier_tour(jeu, j, scores, kopecs, mises):
+    mises[j] = input_protege("combien voulez vous miser?", int, "range", (1,kopecs[j]))
+    for carte in jeu:     # 
+        scores[j] += valeur_carte(carte)
 
 def gagnant(scores):
     maximum = 0
@@ -117,11 +126,13 @@ def partie_finie(joueurs_partie, scores, encore):
     return (21 in scores.values()) or (len(joueurs_partie) == 1) or (not(True in encore.values()))
 
 
-def partie_complete(joueurs, pioche, scores, victoires, encore):
+def partie_complete(joueurs, pioche, scores, victoires, encore, kopecs, mises):
     while not partie_finie(joueurs, scores, encore):    # Tant que  la partie n'est pas finie on repete un tour complet
         tour_complet(joueurs, pioche, scores, encore)
         print(encore)  # pour le débogage
-    victoires[gagnant(scores)] += 1     # A la fin de la partie on incremente le score du gagnant
+    #victoires[gagnant(scores)] += 1     # A la fin de la partie on incremente le score du gagnant
+    kopecs[gagnant (scores)] += sum(mises.values())
+    
 
 
 #########################          C - Intelligence artificielle          #########################
