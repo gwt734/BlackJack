@@ -54,22 +54,28 @@ def init_scores(joueurs, v=0):
     return scores
 
 
-def premier_tour(joueurs_partie, pioche):
-    kopecs = init_scores(joueurs_partie, v=100)
-    mises = init_scores(joueurs_partie, v=100)
+def premier_tour(joueurs_partie, pioche, kopecs):
+    mises = init_scores(joueurs_partie, v=0)
     scores = init_scores(joueurs_partie)
     for j in joueurs_partie:   #
         jeu = []
         for tour in range(2):     # 
-            jeu += pioche_carte(pioche)
+            jeu.append(pioche_carte(pioche))
         print(j, "a pioché", jeu, "au premier tour")
-        valeur_premier_tour(jeu, j, scores, kopecs)
-    return scores
+        valeur_premier_tour(jeu, j, scores, kopecs, mises)
+    return scores, mises
 
 def valeur_premier_tour(jeu, j, scores, kopecs, mises):
-    mises[j] = input_protege("combien voulez vous miser?", int, "range", (1,kopecs[j]))
-    for carte in jeu:     # 
+    for carte in jeu:     #
         scores[j] += valeur_carte(carte)
+    print("score", scores[j])
+    print("kopecs", kopecs)
+    mise = input_protege("combien voulez vous miser?", int, "range", (1, kopecs[j]+1))
+    print("kopecs", kopecs)
+    print("mises", mises)
+    mises[j] = mise
+    kopecs[j] -= mise
+
 
 def gagnant(scores):
     maximum = 0
@@ -115,7 +121,7 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
 
 def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
     for j in scores.keys():
-        if encore[j] and not(partie_finie(joueurs_partie, scores, encore)) and scores[j]<21:  # ou egal
+        if encore[j] and not(partie_finie(joueurs_partie, scores, encore)) and scores[j] < 21:  # ou egal
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
             print("*\n**\n*")
 
@@ -126,12 +132,12 @@ def partie_finie(joueurs_partie, scores, encore):
     return (21 in scores.values()) or (len(joueurs_partie) == 1) or (not(True in encore.values()))
 
 
-def partie_complete(joueurs, pioche, scores, victoires, encore, kopecs, mises):
+def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
     while not partie_finie(joueurs, scores, encore):    # Tant que  la partie n'est pas finie on repete un tour complet
         tour_complet(joueurs, pioche, scores, encore)
         print(encore)  # pour le débogage
-    #victoires[gagnant(scores)] += 1     # A la fin de la partie on incremente le score du gagnant
-    kopecs[gagnant (scores)] += sum(mises.values())
+    kopecs[gagnant(scores)] += sum(mises.values())
+    print("kopecs", kopecs)
     
 
 
