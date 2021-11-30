@@ -8,7 +8,10 @@ def main():
     veut_rejouer = True
     victoires = Fonctions.init_scores(joueurs)
     while veut_rejouer:
-        joueurs_partie = list(joueurs)
+        joueurs_partie = []
+        for j in joueurs:
+            if kopecs[j] > 0:
+                joueurs_partie.append(j)
         pioche = Fonctions.init_pioche(nb_joueurs)
         print(pioche[:7])  # pour le débogage
         encore = Fonctions.init_continuer_tour(joueurs_partie)
