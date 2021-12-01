@@ -110,10 +110,11 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     print(pioche[:4]) # Pour le débogage
     if j.upper() == "IA":
-        encore[j] = choix_intelligent(scores, pioche)
+        score = scores[j]
+        encore[j] = choix_intelligent(score, pioche)
     elif j.upper() == "BOB":
-        encore[j] = choix_booste()
-    else:
+        encore[j] = choix_booste(scores, pioche, j)
+    else:  # si le joueur est un humain
         encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
     if encore[j]:   # si le joueur veut continuer
         scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
@@ -149,6 +150,8 @@ def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
 #########################          C - Intelligence artificielle          #########################
 
 def moyenne_paquet(pioche):
+    """fonction qui calcule la valeur moyenne d'un paquet de carte
+    """
     valeurs = []
     for carte in pioche:
         valeurs.append(valeur_carte(carte))
@@ -163,19 +166,27 @@ def choix_intelligent(score, pioche, risque=False, securite=False):
         else:
             return False  # il faut arreter
     elif risque:  # si l'algorithme doit prendre des risques
-        if estimation / 2 <= 21 - score:  # souvent vrai, risque de perdre
+        if estimation / 2 <= 21 - score:  # souvent vrai, risque de dépasser 21
             return True # il faut continuer
         else:
             return False # il faut arreter
     else:  # si l'algorithme ne doit pas prendre de risques
-        if estimation * 2 <= 21 - score:  # rarement vrai, peu de chances de perdre
+        if estimation * 2 <= 21 - score:  # rarement vrai, peu de chances de dépasser 21
             return True  # il faut continuer
         else:
             return False  # il faut arreter
 
 
-def choix_booste():  # El famoso BOB
-    pass
+def choix_booste(scores, pioche, j):  # El famoso BOB
+    """ Intelligence artificielle qui tient compte de la main des autres joueurs"""
+    estimation = moyenne_paquet(pioche)
+    if estimation <= 21 - scores[j]:
+        return True  # il faut continuer
+    meilleur=max(scores.values())
+    if meilleur != scores[j]:  # si un joueur a plus de points que Bob
+        return True
+    return False
+    
 
 
 #########################          E - Diverses fonctions supplémentaires          #########################
