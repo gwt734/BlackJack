@@ -70,7 +70,7 @@ def valeur_premier_tour(jeu, j, scores, kopecs, mises):
         scores[j] += valeur_carte(carte)
     print("score", scores[j])
     print("kopecs", kopecs)
-    mise = input_protege("combien voulez vous miser?", int, "range", (1, kopecs[j]+1))
+    mise = input_protege(j+" : combien voulez vous miser?", int, "range", (1, kopecs[j]+1))
     print("kopecs", kopecs)
     print("mises", mises)
     mises[j] = mise
@@ -119,7 +119,8 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     if encore[j]:   # si le joueur veut continuer
         scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
     if scores[j] > 21:    # si le joueur dépasse 21 points
-        joueurs_partie.remove(j)   # On l'élimine
+        joueurs_partie.remove(j) # On l'élimine
+        encore[j] = False
     print(scores)  # pour le débogage
 
 
@@ -127,7 +128,7 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
 
 def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
     for j in scores.keys():
-        if encore[j] and not(partie_finie(joueurs_partie, scores, encore)) and scores[j] < 21:  # ou egal
+        if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
             print("*\n**\n*")
 
@@ -154,7 +155,10 @@ def moyenne_paquet(pioche):
     """
     valeurs = []
     for carte in pioche:
-        valeurs.append(valeur_carte(carte))
+        if carte[0]!="A":
+            valeurs.append(valeur_carte(carte))
+        else:
+            valeurs.append(1)  # l'as vaut 1 par défaut et l'IA choisira sa valeur en fonction de son score
     return mean(valeurs)
 
 
@@ -187,7 +191,6 @@ def choix_booste(scores, pioche, j):  # El famoso BOB
         return True
     return False
     
-
 
 #########################          E - Diverses fonctions supplémentaires          #########################
 
