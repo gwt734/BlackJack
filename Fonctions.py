@@ -15,9 +15,17 @@ def paquet():
     return pile
 
 
-def valeur_carte(carte):
+def valeur_carte(carte, j, scores):
     if carte[0] == "A":  # si la carte est un As
-        return input_protege("Quelle valeur choisissez vous pour l'as ?  ", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
+        if j.upper()[0:2] == "IA":
+                return 1 + random.randint(0,1) * 10  # choix aléatoire entre 1 et 11
+        elif j.upper()[0:3] == "BOB":
+            if scores[j] > 11:
+                return 1
+            else :
+                return 11
+        else:  # si le joueur est un humain
+            return input_protege("Quelle valeur choisissez vous pour l'as ?  ", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
     elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
         return 10
     else:  # si la carte est un nombre entre 2 et 9
@@ -43,7 +51,10 @@ def pioche_carte(pioche):  # pioche une seule carte
 def init_joueurs(n):
     joueurs = []
     for i in range(n):  # Pour chaque joueur on demande à l'utilisateur le nom
-        joueurs.append(input_protege("Quel est le nom du joueur " + str(i+1)+" ?  "))
+        nom = input_protege("Quel est le nom du joueur " + str(i+1)+" ?  ")
+        while nom in joueurs:
+            nom = input_protege("Ce nom est déjà utilisé  ")
+        joueurs.append(nom)
     return joueurs
 
 
@@ -55,7 +66,7 @@ def init_scores(joueurs, v=0):
 
 
 def premier_tour(joueurs_partie, pioche, kopecs):
-    mises = init_scores(joueurs_partie, v=0)
+    mises = init_scores(joueurs_partie)
     scores = init_scores(joueurs_partie)
     for j in joueurs_partie:   #
         jeu = []
@@ -65,16 +76,22 @@ def premier_tour(joueurs_partie, pioche, kopecs):
         valeur_premier_tour(jeu, j, scores, kopecs, mises)
     return scores, mises
 
+
 def valeur_premier_tour(jeu, j, scores, kopecs, mises):
     for carte in jeu:     #
-        scores[j] += valeur_carte(carte)
+        scores[j] += valeur_carte(carte, j, scores)
     print("score", scores[j])
     print("kopecs", kopecs)
-    mise = input_protege(j+" : combien voulez vous miser?", int, "range", (1, kopecs[j]+1))
-    print("kopecs", kopecs)
-    print("mises", mises)
+    if j.upper()[0:2] == "IA":
+        mise = ia_mise(j, kopecs)
+    elif j.upper()[0:3] == "BOB":
+        mise = bob_mise(j, kopecs, scores)
+    else:
+        mise = input_protege(j+" : combien voulez vous miser?", int, "range", (1, kopecs[j]+1))
     mises[j] = mise
     kopecs[j] -= mise
+    print("kopecs", kopecs)
+    print("mises", mises)
 
 
 def gagnant(scores):
@@ -109,15 +126,17 @@ def continuer_partie():
 def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     print(pioche[:4]) # Pour le débogage
-    if j.upper() == "IA":
+    # est-ce que le joueur veut continuer à piocher ?
+    if j.upper()[0:2] == "IA":
         score = scores[j]
         encore[j] = choix_intelligent(score, pioche)
-    elif j.upper() == "BOB":
+    elif j.upper()[0:3] == "BOB":
         encore[j] = choix_booste(scores, pioche, j)
     else:  # si le joueur est un humain
         encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
+    # pioche ou non suivant la réponse précédente
     if encore[j]:   # si le joueur veut continuer
-        scores[j] += valeur_carte(pioche_carte(pioche))  # On augmente le score de la valeur de la carte piochée
+        scores[j] += valeur_carte(pioche_carte(pioche), j, scores)  # On augmente le score de la valeur de la carte piochée
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j) # On l'élimine
         encore[j] = False
@@ -151,14 +170,15 @@ def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
 #########################          C - Intelligence artificielle          #########################
 
 def moyenne_paquet(pioche):
-    """fonction qui calcule la valeur moyenne d'un paquet de carte
-    """
+    """fonction qui calcule la valeur moyenne d'un paquet de carte"""
     valeurs = []
     for carte in pioche:
-        if carte[0]!="A":
-            valeurs.append(valeur_carte(carte))
-        else:
+        if carte[0] == "A":
             valeurs.append(1)  # l'as vaut 1 par défaut et l'IA choisira sa valeur en fonction de son score
+        elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
+            valeurs.append(10)
+        else:  # si la carte est un nombre entre 2 et 9
+            valeurs.append(int(carte[0]))
     return mean(valeurs)
 
 
@@ -186,11 +206,31 @@ def choix_booste(scores, pioche, j):  # El famoso BOB
     estimation = moyenne_paquet(pioche)
     if estimation <= 21 - scores[j]:
         return True  # il faut continuer
-    meilleur=max(scores.values())
+    meilleur = max(scores.values())
     if meilleur != scores[j]:  # si un joueur a plus de points que Bob
         return True
     return False
-    
+
+
+def ia_mise(j, kopecs):
+    valeur = int(0.2 * kopecs[j])+10
+    while valeur > kopecs[j]:
+        valeur -= 1
+    return valeur
+
+
+def bob_mise(j, scores, kopecs):
+    if scores[j] == 21:
+        valeur = kopecs[j]
+    elif scores[j] in [20,19,14,13] and (not 21 in scores.values()):
+        valeur = int(0.8 * kopecs[j]) + 1
+    else:
+        valeur = int(0.2 * kopecs[j]) + 10
+        while valeur > kopecs[j]:
+            valeur -= 1
+    return valeur
+
+
 
 #########################          E - Diverses fonctions supplémentaires          #########################
 
