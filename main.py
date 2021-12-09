@@ -9,12 +9,12 @@ def main():
     kopecs = Fonctions.init_scores(joueurs, v=100)
     while veut_rejouer:
         joueurs_partie = []
-        for j in joueurs:
+        for j in joueurs:  # avant chaque partie on vérifie qu'il reste de l'argent à tous les joueurs
             if kopecs[j] > 0:
-                joueurs_partie.append(j)
+                joueurs_partie.append(j)  # si ce n'est pas le cas, on les enlève définitivement
 
         pioche = Fonctions.init_pioche(nb_joueurs)
-        print(pioche[:7])  # pour le débogage
+        # print(pioche[:7])  # pour le débogage
         encore = Fonctions.init_continuer_tour(joueurs_partie)
         scores, mises = Fonctions.premier_tour(joueurs_partie, pioche, kopecs)
         # print(pioche[:6])  # pour le débogage
@@ -22,8 +22,8 @@ def main():
         print(Fonctions.gagnant(scores),"a gagné la partie !")
         print("*\n**\n***\n****\n***\n**\n*")
         veut_rejouer = Fonctions.continuer_partie()
-
-    # Fonction à tester
+    for joueur in kopecs:
+        print("Il reste",kopecs[joueur],"kopecs à",joueur)
 
 
 if __name__ == '__main__':

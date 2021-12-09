@@ -25,7 +25,7 @@ def valeur_carte(carte, j, scores):
             else :
                 return 11
         else:  # si le joueur est un humain
-            return input_protege("Quelle valeur choisissez vous pour l'as ?  ", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
+            return input_protege("Quelle valeur choisissez vous pour l'as ? ", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
     elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
         return 10
     else:  # si la carte est un nombre entre 2 et 9
@@ -52,8 +52,8 @@ def init_joueurs(n):
     joueurs = []
     for i in range(n):  # Pour chaque joueur on demande à l'utilisateur le nom
         nom = input_protege("Quel est le nom du joueur " + str(i+1)+" ?  ")
-        while nom in joueurs:
-            nom = input_protege("Ce nom est déjà utilisé  ")
+        while nom in joueurs:  # contrôle pour ne pas avoir 2 fois le même nom
+            nom = input_protege("Ce nom est déjà utilisé, merci d'en entrer un autre : ")
         joueurs.append(nom)
     return joueurs
 
@@ -87,7 +87,7 @@ def valeur_premier_tour(jeu, j, scores, kopecs, mises):
     elif j.upper()[0:3] == "BOB":
         mise = bob_mise(j, kopecs, scores)
     else:
-        mise = input_protege(j+" : combien voulez vous miser?", int, "range", (1, kopecs[j]+1))
+        mise = input_protege(j+" : combien voulez vous miser ? ", int, "range", (1, kopecs[j]+1))
     mises[j] = mise
     kopecs[j] -= mise
     print("kopecs", kopecs)
@@ -96,18 +96,17 @@ def valeur_premier_tour(jeu, j, scores, kopecs, mises):
 
 def gagnant(scores):
     maximum = 0
-    for i in scores.keys():     # On parcours les joueurs
+    for i in scores.keys():     # On parcourt les joueurs
         if maximum < scores[i] <= 21:
             maximum = scores[i]
             joueur_gagnant = i
     return joueur_gagnant
-    # Fonction à tester
 
 
 #########################          B1 - Tour d'un joueur          #########################
 
 def continuer_tour():
-    return input_protege("Souhaitez-vous piocher une autre carte ?  ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
+    return input_protege("Souhaitez-vous piocher une autre carte ? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
@@ -125,7 +124,7 @@ def continuer_partie():
 
 def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
-    print(pioche[:4]) # Pour le débogage
+    # print(pioche[:4]) # Pour le débogage
     # est-ce que le joueur veut continuer à piocher ?
     if j.upper()[0:2] == "IA":
         score = scores[j]
@@ -136,11 +135,13 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
         encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
     # pioche ou non suivant la réponse précédente
     if encore[j]:   # si le joueur veut continuer
-        scores[j] += valeur_carte(pioche_carte(pioche), j, scores)  # On augmente le score de la valeur de la carte piochée
+        carte = pioche_carte(pioche)
+        print("Vous avez pioché",carte)
+        scores[j] += valeur_carte(carte, j, scores)  # On augmente le score de la valeur de la carte piochée
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j) # On l'élimine
         encore[j] = False
-    print(scores)  # pour le débogage
+    print(scores)  #
 
 
 #########################          B2 - Une partie complète          #########################
