@@ -7,23 +7,28 @@ def main():
     joueurs = Fonctions.init_joueurs(nb_joueurs)    # Créé la liste des joueurs
     veut_rejouer = True
     kopecs = Fonctions.init_scores(joueurs, v=100)
+    nb_parties = 0
     while veut_rejouer:
+        nb_parties += 1
         joueurs_partie = []
         for j in joueurs:  # avant chaque partie on vérifie qu'il reste de l'argent à tous les joueurs
             if kopecs[j] > 0:
-                joueurs_partie.append(j)  # si ce n'est pas le cas, on les enlève définitivement
+                joueurs_partie.append(j)  # si c'est le cas, on les ajoute à la partie
 
         pioche = Fonctions.init_pioche(nb_joueurs)
         # print(pioche[:7])  # pour le débogage
         encore = Fonctions.init_continuer_tour(joueurs_partie)
+        print("*\n**\n*")
         scores, mises = Fonctions.premier_tour(joueurs_partie, pioche, kopecs)
         # print(pioche[:6])  # pour le débogage
         Fonctions.partie_complete(joueurs_partie, pioche, scores, encore, kopecs, mises)
-        print(Fonctions.gagnant(scores),"a gagné la partie !")
-        print("*\n**\n***\n****\n***\n**\n*")
+        # print(Fonctions.gagnant(scores),"a gagné la partie !")
+        print("*\n**\n*")
+        for joueur in kopecs:
+            print("Il reste", kopecs[joueur], "kopecs à", joueur)
+        print("*\n**\n*")
         veut_rejouer = Fonctions.continuer_partie()
-    for joueur in kopecs:
-        print("Il reste",kopecs[joueur],"kopecs à",joueur)
+    Fonctions.fin_de_jeu(kopecs, nb_parties)
 
 
 if __name__ == '__main__':

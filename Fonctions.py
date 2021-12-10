@@ -74,24 +74,29 @@ def premier_tour(joueurs_partie, pioche, kopecs):
             jeu.append(pioche_carte(pioche))
         print(j, "a pioché", jeu, "au premier tour")
         valeur_premier_tour(jeu, j, scores, kopecs, mises)
+        print()
     return scores, mises
 
 
 def valeur_premier_tour(jeu, j, scores, kopecs, mises):
     for carte in jeu:     #
         scores[j] += valeur_carte(carte, j, scores)
-    print("score", scores[j])
-    print("kopecs", kopecs)
     if j.upper()[0:2] == "IA":
+        print(j,": score =", scores[j], "et kopecs restants =", kopecs[j])
         mise = ia_mise(j, kopecs)
+        print(j, "a misé", mise)
     elif j.upper()[0:3] == "BOB":
-        mise = bob_mise(j, kopecs, scores)
-    else:
+        print(j,": score =", scores[j], "et kopecs restants =", kopecs[j])
+        mise = bob_mise(j, scores, kopecs)
+        print(j, "a misé", mise)
+    else:  # si le joueur est un humain
+        print(j+", votre score est de", scores[j])
+        print("Et il vous reste",kopecs[j],"kopecs")
         mise = input_protege(j+" : combien voulez vous miser ? ", int, "range", (1, kopecs[j]+1))
     mises[j] = mise
     kopecs[j] -= mise
-    print("kopecs", kopecs)
-    print("mises", mises)
+    # print("kopecs", kopecs)
+    # print("mises", mises)
 
 
 def gagnant(scores):
@@ -136,8 +141,10 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     # pioche ou non suivant la réponse précédente
     if encore[j]:   # si le joueur veut continuer
         carte = pioche_carte(pioche)
-        print("Vous avez pioché",carte)
+        print(j,"a pioché",carte)
         scores[j] += valeur_carte(carte, j, scores)  # On augmente le score de la valeur de la carte piochée
+    else:
+        print(j,"n'a pas pioché")
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j) # On l'élimine
         encore[j] = False
@@ -162,9 +169,11 @@ def partie_finie(joueurs_partie, scores, encore):
 def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
     while not partie_finie(joueurs, scores, encore):    # Tant que  la partie n'est pas finie on repete un tour complet
         tour_complet(joueurs, pioche, scores, encore)
-        print(encore)  # pour le débogage
-    kopecs[gagnant(scores)] += sum(mises.values())
-    print("kopecs", kopecs)
+        # print(encore)  # pour le débogage
+    vainqueur = gagnant(scores)
+    gain = sum(mises.values())
+    kopecs[vainqueur] += gain
+    print(vainqueur,"a gagné la partie et remporte", str(gain), "kopecs !")
     
 
 
@@ -224,7 +233,7 @@ def bob_mise(j, scores, kopecs):
     if scores[j] == 21:
         valeur = kopecs[j]
     elif scores[j] in [20,19,14,13] and (not 21 in scores.values()):
-        valeur = int(0.8 * kopecs[j]) + 1
+        valeur = int(0.5 * kopecs[j]) + 1
     else:
         valeur = int(0.2 * kopecs[j]) + 10
         while valeur > kopecs[j]:
@@ -274,5 +283,19 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
                     saisie = input()
             else:
                 valeur_verifie = True
-            print(valeur_verifie)
+            # print(valeur_verifie)
     return saisie_modifie
+
+
+def fin_de_jeu(kopecs, nb_parties):
+    """Affiche les résultats totaux après l'ensemble des parties"""
+    difference = init_scores(kopecs.keys())
+    for joueur in kopecs:
+        difference[joueur] = kopecs[joueur] - 100
+    diff = sorted(difference.items(), key=lambda t: t[1], reverse=True)  # trie le dictionnaire et rend une liste de couples
+    print("Sur l'ensemble des", nb_parties, "parties :")
+    for couple in diff:
+        if couple[1] < 0:
+            print(couple[0], "a perdu", abs(couple[1]), "kopecs")
+        else:
+            print(couple[0], "a gagné", couple[1], "kopecs")
