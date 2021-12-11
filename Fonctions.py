@@ -3,6 +3,7 @@
 import Constantes
 import random
 from statistics import mean
+import time
 
 
 #########################          A1 - Paquet de cartes          #########################
@@ -75,6 +76,8 @@ def premier_tour(joueurs_partie, pioche, kopecs):
         print(j, "a pioché", jeu, "au premier tour")
         valeur_premier_tour(jeu, j, scores, kopecs, mises)
         print()
+        time.sleep(2)
+    print(Constantes.AFFICHAGE+"\n")
     return scores, mises
 
 
@@ -128,6 +131,7 @@ def continuer_partie():
 
 
 def tour_joueur(j, joueurs_partie, pioche, scores, encore):
+    print(scores)  # à améliorer
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     # print(pioche[:4]) # Pour le débogage
     # est-ce que le joueur veut continuer à piocher ?
@@ -143,12 +147,13 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
         carte = pioche_carte(pioche)
         print(j,"a pioché",carte)
         scores[j] += valeur_carte(carte, j, scores)  # On augmente le score de la valeur de la carte piochée
+        print(j, ": votre score est maintenant de", scores[j])  # Pour se repérer
     else:
         print(j,"n'a pas pioché")
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j) # On l'élimine
         encore[j] = False
-    print(scores)  #
+    time.sleep(2)
 
 
 #########################          B2 - Une partie complète          #########################
@@ -157,7 +162,7 @@ def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur 
     for j in scores.keys():
         if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
-            print("*\n**\n*")
+            print()
 
 
 def partie_finie(joueurs_partie, scores, encore):
@@ -175,7 +180,6 @@ def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
     kopecs[vainqueur] += gain
     print(vainqueur,"a gagné la partie et remporte", str(gain), "kopecs !")
     
-
 
 #########################          C - Intelligence artificielle          #########################
 
@@ -216,30 +220,35 @@ def choix_booste(scores, pioche, j):  # El famoso BOB
     estimation = moyenne_paquet(pioche)
     if estimation <= 21 - scores[j]:
         return True  # il faut continuer
-    meilleur = max(scores.values())
+    points = dict(scores)  # création d'un dictionnaire intermédiaire ne servant qu'à cette IA
+    for joueur in points:  # il contient tous les scores en dessous de 21, donc les joueurs encore dans la partie
+        if scores[joueur] > 21:
+            del points[joueur]
+    meilleur = max(points.values())  # ce dictionnaire nous sert
     if meilleur != scores[j]:  # si un joueur a plus de points que Bob
         return True
     return False
 
 
 def ia_mise(j, kopecs):
-    valeur = int(0.2 * kopecs[j])+10
-    while valeur > kopecs[j]:
+    """mise arbitraire dépendant du nombre de kopecs restants"""
+    valeur = int(0.3 * kopecs[j])+10
+    while valeur > kopecs[j]:  # pour pas que le nombre de kopecs misés soient supérieurs au nombre de kopecs restants
         valeur -= 1
     return valeur
 
 
 def bob_mise(j, scores, kopecs):
+    """mise qui dépend du score du joueur et du score des autres"""
     if scores[j] == 21:
         valeur = kopecs[j]
-    elif scores[j] in [20,19,14,13] and (not 21 in scores.values()):
-        valeur = int(0.5 * kopecs[j]) + 1
+    elif scores[j] in [20,19] and (21 not in scores.values()):
+        valeur = int(0.4 * kopecs[j]) + 1
     else:
         valeur = int(0.2 * kopecs[j]) + 10
-        while valeur > kopecs[j]:
+        while valeur > kopecs[j]:  # pour pas que le nombre de kopecs misés soient supérieurs au nombre de kopecs restants
             valeur -= 1
     return valeur
-
 
 
 #########################          E - Diverses fonctions supplémentaires          #########################
@@ -293,7 +302,10 @@ def fin_de_jeu(kopecs, nb_parties):
     for joueur in kopecs:
         difference[joueur] = kopecs[joueur] - 100
     diff = sorted(difference.items(), key=lambda t: t[1], reverse=True)  # trie le dictionnaire et rend une liste de couples
-    print("Sur l'ensemble des", nb_parties, "parties :")
+    if nb_parties == 1:
+        print("\nSur la partie :")
+    else:
+        print("\nSur l'ensemble des", nb_parties, "parties :")
     for couple in diff:
         if couple[1] < 0:
             print(couple[0], "a perdu", abs(couple[1]), "kopecs")
