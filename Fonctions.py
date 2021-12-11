@@ -19,11 +19,15 @@ def paquet():
 def valeur_carte(carte, j, scores):
     if carte[0] == "A":  # si la carte est un As
         if j.upper()[0:2] == "IA":
-                return 1 + random.randint(0,1) * 10  # choix aléatoire entre 1 et 11
+            valeur = 1 + random.randint(0,1) * 10
+            print(j, "a choisi", valeur, "comme valeur pour l'As")
+            return valeur  # choix aléatoire entre 1 et 11
         elif j.upper()[0:3] == "BOB":
-            if scores[j] > 11:
+            if scores[j] >= 11:
+                print(j, "a choisi 1 comme valeur pour l'As")
                 return 1
             else :
+                print(j, "a choisi 11 comme valeur pour l'As")
                 return 11
         else:  # si le joueur est un humain
             return input_protege("Quelle valeur choisissez vous pour l'as ? ", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
@@ -52,7 +56,7 @@ def pioche_carte(pioche):  # pioche une seule carte
 def init_joueurs(n):
     joueurs = []
     for i in range(n):  # Pour chaque joueur on demande à l'utilisateur le nom
-        nom = input_protege("Quel est le nom du joueur " + str(i+1)+" ?  ")
+        nom = input_protege("Quel est le nom du joueur " + str(i+1)+" ? ")
         while nom in joueurs:  # contrôle pour ne pas avoir 2 fois le même nom
             nom = input_protege("Ce nom est déjà utilisé, merci d'en entrer un autre : ")
         joueurs.append(nom)
@@ -69,14 +73,14 @@ def init_scores(joueurs, v=0):
 def premier_tour(joueurs_partie, pioche, kopecs):
     mises = init_scores(joueurs_partie)
     scores = init_scores(joueurs_partie)
-    for j in joueurs_partie:   #
+    for j in joueurs_partie:
         jeu = []
-        for tour in range(2):     # 
+        for tour in range(2):  # on leur fait piocher 2 cartes
             jeu.append(pioche_carte(pioche))
         print(j, "a pioché", jeu, "au premier tour")
         valeur_premier_tour(jeu, j, scores, kopecs, mises)
         print()
-        time.sleep(2)
+        #time.sleep(2)
     print(Constantes.AFFICHAGE+"\n")
     return scores, mises
 
@@ -98,8 +102,6 @@ def valeur_premier_tour(jeu, j, scores, kopecs, mises):
         mise = input_protege(j+" : combien voulez vous miser ? ", int, "range", (1, kopecs[j]+1))
     mises[j] = mise
     kopecs[j] -= mise
-    # print("kopecs", kopecs)
-    # print("mises", mises)
 
 
 def gagnant(scores):
@@ -131,9 +133,8 @@ def continuer_partie():
 
 
 def tour_joueur(j, joueurs_partie, pioche, scores, encore):
-    print(scores)  # à améliorer
+    print("Les scores actuels sont :",scores)
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
-    # print(pioche[:4]) # Pour le débogage
     # est-ce que le joueur veut continuer à piocher ?
     if j.upper()[0:2] == "IA":
         score = scores[j]
@@ -153,7 +154,7 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j) # On l'élimine
         encore[j] = False
-    time.sleep(2)
+    #time.sleep(2)
 
 
 #########################          B2 - Une partie complète          #########################
@@ -174,7 +175,7 @@ def partie_finie(joueurs_partie, scores, encore):
 def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
     while not partie_finie(joueurs, scores, encore):    # Tant que  la partie n'est pas finie on repete un tour complet
         tour_complet(joueurs, pioche, scores, encore)
-        # print(encore)  # pour le débogage
+        # print(encore)  # affiche l'état du dictionnaire, pour vérification
     vainqueur = gagnant(scores)
     gain = sum(mises.values())
     kopecs[vainqueur] += gain
@@ -197,8 +198,9 @@ def moyenne_paquet(pioche):
 
 
 def choix_intelligent(score, pioche, risque=False, securite=False):
+    """Intelligence artificielle qui décide de continuer ou non en fonction de son score et des cartes déjà tirées de la pioche"""
     estimation = moyenne_paquet(pioche)
-    if (not(risque) and not(securite)) or (risque and securite):  # si l'algorithme doit jouer de manière optimale
+    if not(risque or securite) or (risque and securite):  # si l'algorithme doit jouer de manière optimale
         if estimation <= 21 - score:
             return True  # il faut continuer
         else:
@@ -216,15 +218,15 @@ def choix_intelligent(score, pioche, risque=False, securite=False):
 
 
 def choix_booste(scores, pioche, j):  # El famoso BOB
-    """ Intelligence artificielle qui tient compte de la main des autres joueurs"""
+    """ Intelligence artificielle qui tient compte de son score, de la pioche et de la main des autres joueurs"""
     estimation = moyenne_paquet(pioche)
     if estimation <= 21 - scores[j]:
         return True  # il faut continuer
     points = dict(scores)  # création d'un dictionnaire intermédiaire ne servant qu'à cette IA
-    for joueur in points:  # il contient tous les scores en dessous de 21, donc les joueurs encore dans la partie
+    for joueur in scores:  # il contient tous les scores en dessous de 21, donc les joueurs encore dans la partie
         if scores[joueur] > 21:
             del points[joueur]
-    meilleur = max(points.values())  # ce dictionnaire nous sert
+    meilleur = max(points.values())  # nous pouvons donc rechercher le max des valeurs de ce dictionnaire
     if meilleur != scores[j]:  # si un joueur a plus de points que Bob
         return True
     return False
@@ -233,7 +235,7 @@ def choix_booste(scores, pioche, j):  # El famoso BOB
 def ia_mise(j, kopecs):
     """mise arbitraire dépendant du nombre de kopecs restants"""
     valeur = int(0.3 * kopecs[j])+10
-    while valeur > kopecs[j]:  # pour pas que le nombre de kopecs misés soient supérieurs au nombre de kopecs restants
+    while valeur > kopecs[j]:  # pour pas que le nombre de kopecs misés soit supérieur au nombre de kopecs restants
         valeur -= 1
     return valeur
 
@@ -246,7 +248,7 @@ def bob_mise(j, scores, kopecs):
         valeur = int(0.4 * kopecs[j]) + 1
     else:
         valeur = int(0.2 * kopecs[j]) + 10
-        while valeur > kopecs[j]:  # pour pas que le nombre de kopecs misés soient supérieurs au nombre de kopecs restants
+        while valeur > kopecs[j]:  # pour pas que le nombre de kopecs misés soit supérieur au nombre de kopecs restants
             valeur -= 1
     return valeur
 
@@ -270,7 +272,7 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
             saisie_modifie = type_attendu(saisie)
 
         except:
-            print("Votre saisie n'est pas du type ", type_attendu.__name__, ". Merci de saisir un ",
+            print("Votre saisie n'est pas du type", type_attendu.__name__, ". Merci de saisir un",
                   type_attendu.__name__)
             saisie = input()
 
@@ -280,8 +282,8 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
                 if saisie_modifie in range(intervalle_reponses_possibles[0], intervalle_reponses_possibles[1]):
                     valeur_verifie = True
                 else:
-                    print("Votre saisie n'est pas comprise dans l'intervalle : ", intervalle_reponses_possibles,
-                          ". Merci de saisir une valeur comprise dans : ", intervalle_reponses_possibles)
+                    print("Votre saisie n'est pas comprise entre", intervalle_reponses_possibles[0], "et",
+                          str(intervalle_reponses_possibles[1]-1),". Merci de saisir une valeur comprise dans cet intervalle")
                     saisie = input()
             elif range_or_list == "list":
                 if saisie_modifie in liste_reponses_possibles:
@@ -296,7 +298,23 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
     return saisie_modifie
 
 
-def fin_de_jeu(kopecs, nb_parties):
+def fin_de_partie(kopecs, joueurs):
+    """affichage de fin de partie pour que les joueurs se repèrent"""
+    print(Constantes.AFFICHAGE)
+    for joueur in kopecs:
+        if kopecs[joueur] == 0:
+            print(joueur,"est éliminé")
+        else:
+            print("Il reste", kopecs[joueur], "kopecs à", joueur)
+    print(Constantes.AFFICHAGE)
+    joueurs_partie = []
+    for j in joueurs:  # après chaque partie on vérifie qu'il reste de l'argent à chaque joueur
+        if kopecs[j] > 0:
+            joueurs_partie.append(j)  # si c'est le cas, on les ajoute à la partie
+    return joueurs_partie
+
+
+def affichage_fin_de_jeu(kopecs, nb_parties):
     """Affiche les résultats totaux après l'ensemble des parties"""
     difference = init_scores(kopecs.keys())
     for joueur in kopecs:
@@ -307,7 +325,9 @@ def fin_de_jeu(kopecs, nb_parties):
     else:
         print("\nSur l'ensemble des", nb_parties, "parties :")
     for couple in diff:
-        if couple[1] < 0:
-            print(couple[0], "a perdu", abs(couple[1]), "kopecs")
+        if couple[1] == -100:
+            print(couple[0], "a tout perdu")
+        elif couple[1] < 0:
+            print(couple[0], "a perdu", abs(couple[1]), "kopecs  ("+str(couple[1]+100)+" restants)")
         else:
-            print(couple[0], "a gagné", couple[1], "kopecs")
+            print(couple[0], "a gagné", couple[1], "kopecs  ("+str(couple[1]+100)+" restants)")
