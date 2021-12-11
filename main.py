@@ -1,9 +1,11 @@
 # Programme principal où est effectuée l'exécution
 import Fonctions
 import Constantes
+import Fonctions_pygame
 
 
 def main():
+    fenetre, polices = Fonctions_pygame.initialisation_fenetre()
     nb_joueurs = Fonctions.input_protege("Combien de joueurs jouerons ? ", type_attendu=int, range_or_list="range", intervalle_reponses_possibles=(2, 16)) # Demande le nombre de joueurs
     print()
     joueurs = Fonctions.init_joueurs(nb_joueurs)    # Créé la liste des joueurs
