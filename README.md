@@ -14,6 +14,7 @@ Codage d'une version simplifiée du BlackJack avec une interface graphique et de
 ## Installation:
 Simple téléchargement de tous les fichiers en faisant attention à les laisser dans un même dossier.
 > Avoir python 3 installé est aussi nécessaire (si ça n'est pas le cas vous pouvez le faire [ici](https://www.python.org/downloads/ "Téléchargent de la dernière version de python 3 par le site officiel")).
+> Il est aussi nécessaire d'avoir pygame installé si vous souhaitez utiliser la version avec interface graphique ( un guide sur l'installation de ce module est disponible [ici](https://www.pygame.org/wiki/GettingStarted)
 
 ## Exécution du jeu :
 Il existe différentes manières de lancer le jeu :
@@ -29,5 +30,3 @@ Il existe différentes manières de lancer le jeu :
 * Pour l'ensemble du projet :
   * Yann Letourneur,
   * Gwendal Tréhin.
-* Pour le fichier de consignes :
-  * Olivier Aycard.
