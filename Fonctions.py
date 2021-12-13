@@ -164,7 +164,7 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
     fenetre.fill(Constantes.VERT_BLACKJACK)
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
                                        "Voulez-vous continuer à jouer?", fenetre, polices["grande"])
-    if j[:2].upper() == "IA" or j[:3].upper() == "BOB":
+    if j[:2].upper() != "IA" and j[:3].upper() != "BOB":
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
                                            "* Appuyez sur ESPACE pour piocher, TAB pour arrêter de piocher *", fenetre,
                                            polices["petite"], couleur_texte=Constantes.GRIS)
