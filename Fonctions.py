@@ -18,10 +18,16 @@ def paquet():
 
 def valeur_carte(carte, j, scores):
     if carte[0] == "A":  # si la carte est un As
-        if j.upper()[0:2] == "IA":
-            valeur = 1 + random.randint(0,1) * 10
+        if j.upper()[0:3] == "IAR":  # IA qui prend des risques
+            print(j, "a choisi 11 comme valeur pour l'As")
+            return 11
+        elif j.upper()[0:3] == "IAS":  # IA qui privilégie la sécurité
+            print(j, "a choisi 1 comme valeur pour l'As")
+            return 1
+        elif j.upper()[0:2] == "IA":  # IA normale
+            valeur = 1 + random.randint(0,1) * 10  # choix aléatoire entre 1 et 11
             print(j, "a choisi", valeur, "comme valeur pour l'As")
-            return valeur  # choix aléatoire entre 1 et 11
+            return valeur
         elif j.upper()[0:3] == "BOB":
             if scores[j] >= 11:
                 print(j, "a choisi 1 comme valeur pour l'As")
@@ -80,13 +86,13 @@ def premier_tour(joueurs_partie, pioche, kopecs):
         print(j, "a pioché", jeu, "au premier tour")
         valeur_premier_tour(jeu, j, scores, kopecs, mises)
         print()
-        #time.sleep(2)
+        # time.sleep(2)  # ajout d'un délai (2 secondes) pour permettre aux humains de lire les choix des IA
     print(Constantes.AFFICHAGE+"\n")
     return scores, mises
 
 
 def valeur_premier_tour(jeu, j, scores, kopecs, mises):
-    for carte in jeu:     #
+    for carte in jeu:
         scores[j] += valeur_carte(carte, j, scores)
     if j.upper()[0:2] == "IA":
         print(j,": score =", scores[j], "et kopecs restants =", kopecs[j])
@@ -136,10 +142,16 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     print("Les scores actuels sont :",scores)
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     # est-ce que le joueur veut continuer à piocher ?
-    if j.upper()[0:2] == "IA":
+    if j.upper()[0:3] == "IAR":  # IA qui prend des risques
+        score = scores[j]
+        encore[j] = choix_intelligent(score, pioche, risque=True)
+    elif j.upper()[0:3] == "IAS":  # IA qui privilégie la sécurité
+        score = scores[j]
+        encore[j] = choix_intelligent(score, pioche, securite=True)
+    elif j.upper()[0:2] == "IA":  # IA normale
         score = scores[j]
         encore[j] = choix_intelligent(score, pioche)
-    elif j.upper()[0:3] == "BOB":
+    elif j.upper()[0:3] == "BOB":  # IA boostée qui prend plus de paramètres en compte
         encore[j] = choix_booste(scores, pioche, j)
     else:  # si le joueur est un humain
         encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
@@ -154,16 +166,17 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j) # On l'élimine
         encore[j] = False
-    #time.sleep(2)
+    # time.sleep(2)  # ajout d'un délai (2 secondes) pour permettre aux humains de lire les choix des IA
 
 
 #########################          B2 - Une partie complète          #########################
 
-def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
+def tour_complet(joueurs_partie, pioche, scores, encore):
+    """Pour chaque joueur encore dans la partie, on lui fait un tour"""
     for j in scores.keys():
         if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
-            print()
+            print()  # saut de ligne pour aérer l'affichage
 
 
 def partie_finie(joueurs_partie, scores, encore):
@@ -189,7 +202,7 @@ def moyenne_paquet(pioche):
     valeurs = []
     for carte in pioche:
         if carte[0] == "A":
-            valeurs.append(1)  # l'as vaut 1 par défaut et l'IA choisira sa valeur en fonction de son score
+            valeurs.append(1)  # l'as vaut 1 par défaut (valeur minimale) et l'IA choisira sa vraie valeur après
         elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
             valeurs.append(10)
         else:  # si la carte est un nombre entre 2 et 9
@@ -199,22 +212,13 @@ def moyenne_paquet(pioche):
 
 def choix_intelligent(score, pioche, risque=False, securite=False):
     """Intelligence artificielle qui décide de continuer ou non en fonction de son score et des cartes déjà tirées de la pioche"""
-    estimation = moyenne_paquet(pioche)
+    estimation = moyenne_paquet(pioche)  # autour de 6.5
     if not(risque or securite) or (risque and securite):  # si l'algorithme doit jouer de manière optimale
-        if estimation <= 21 - score:
-            return True  # il faut continuer
-        else:
-            return False  # il faut arreter
+        return score <= 21 - estimation
     elif risque:  # si l'algorithme doit prendre des risques
-        if estimation / 2 <= 21 - score:  # souvent vrai, risque de dépasser 21
-            return True # il faut continuer
-        else:
-            return False # il faut arreter
+        return score <= 21 - estimation / 1.5  # souvent vrai, risque de dépasser 21
     else:  # si l'algorithme ne doit pas prendre de risques
-        if estimation * 2 <= 21 - score:  # rarement vrai, peu de chances de dépasser 21
-            return True  # il faut continuer
-        else:
-            return False  # il faut arreter
+        return score <= 21 - estimation * 1.5  # rarement vrai, peu de chances de dépasser 21
 
 
 def choix_booste(scores, pioche, j):  # El famoso BOB
