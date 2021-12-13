@@ -108,18 +108,18 @@ def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
         print(j, "a misé", mise)
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           j + " a pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
+                                           j + " à pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
-        time.sleep(2)
+        time.sleep(3)
     elif j.upper()[0:3] == "BOB":
         print(j, ": score =", scores[j], "et kopecs restants =", kopecs[j])
         mise = bob_mise(j, scores, kopecs)
         print(j, "a misé", mise)
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           j + " a pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
+                                           j + " à pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
-        time.sleep(2)
+        time.sleep(3)
     else:  # si le joueur est un humain
         print(j + ", votre score est de", scores[j])
         print("Et il vous reste", kopecs[j], "kopecs")
@@ -269,7 +269,7 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
                                        polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, mises=mises)
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2*Constantes.TAILLE_FENETRE[1] // 3 - 100),
-                                       "Les gains de cette partie: ", fenetre, polices["moyenne"], )
+                                       "Les kopecs restants: ", fenetre, polices["moyenne"], )
     Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores)
     Fonctions_pygame.creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, scores)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
