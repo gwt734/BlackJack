@@ -164,9 +164,10 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
     fenetre.fill(Constantes.VERT_BLACKJACK)
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
                                        "Voulez-vous continuer à jouer?", fenetre, polices["grande"])
-    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
-                                       "* Appuyez sur ESPACE pour piocher, TAB pour arrêter de piocher *", fenetre,
-                                       polices["petite"], couleur_texte=Constantes.GRIS)
+    if j[:2].upper() == "IA" or j[:3].upper() == "BOB":
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
+                                           "* Appuyez sur ESPACE pour piocher, TAB pour arrêter de piocher *", fenetre,
+                                           polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
     if j.upper()[0:3] == "IAR":  # IA qui prend des risques
@@ -209,7 +210,8 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
     if scores[j] > 21:  # si le joueur dépasse 21 points
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           j + " a dépassé 21 et est donc éliminé de cette manche.", fenetre, polices["grande"])
+                                           j + " a dépassé 21 et est donc éliminé de cette manche.", fenetre,
+                                           polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
         time.sleep(1)
         joueurs_partie.remove(j)  # On l'élimine
@@ -241,6 +243,8 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
     vainqueur = gagnant(scores)
     gain = sum(mises.values())
     kopecs[vainqueur] += gain
+    kopecs_avec_gains = {}
+
     print(vainqueur, "a gagné la partie et remporte", str(gain), "kopecs !")
     fenetre.fill(Constantes.VERT_BLACKJACK)
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
@@ -252,6 +256,9 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
                                        "* Appuyez sur ESPACE pour continuer, ECHAP pour quitter le jeu *", fenetre,
                                        polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, mises=mises)
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2 - 100),
+                                       "Les scores finaux sont: ", fenetre, polices["moyenne"], )
+    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, kopecs, encore, kopecs, mises=mises)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
 
 
