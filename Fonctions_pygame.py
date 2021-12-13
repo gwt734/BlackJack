@@ -26,10 +26,10 @@ def initialisation_fenetre():
 
 
 def pygame_bool_input():
+    """Fonction qui attends une touche de l'utilisateur et retourne vrai si ESPACE est touché et faux si TAB est touché."""
     while True:
-
-        for evenement in pygame.event.get():
-            if evenement.type == pygame.KEYDOWN:
+        for evenement in pygame.event.get():  # Parcours tous les évenements recus depuis le dernier tick
+            if evenement.type == pygame.KEYDOWN:   #
 
                 if evenement.key == pygame.K_ESCAPE:
                     pygame.quit()
@@ -112,7 +112,7 @@ def texte_input(fenetre, polices, question, valeur_par_default="", avertissement
 def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1):
     joueurs_restants = []
     for joueur in scores.keys():
-        if kopecs[joueur] != 0:
+        if kopecs[joueur] != 0:  #mises
             joueurs_restants.append(joueur)
     nombre_de_joueurs = len(joueurs_restants)
     for index_joueur in range(nombre_de_joueurs):
