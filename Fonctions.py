@@ -159,6 +159,10 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
     if encore[j]:   # si le joueur veut continuer
         carte = pioche_carte(pioche)
         print(j, "a pioché", carte)
+        fenetre.fill(Constantes.VERT_BLACKJACK)
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0]//2, Constantes.TAILLE_FENETRE[1]//3), "Vous avez pioché " + str(carte), fenetre, polices["grande"])
+        Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+        time.sleep(1)
         scores[j] += valeur_carte(fenetre, polices, carte, j, scores)  # On augmente le score de la valeur de la carte piochée
         print(j, ": votre score est maintenant de", scores[j])  # Pour se repérer
     else:
