@@ -1,4 +1,5 @@
 # Fichier où stocker toutes les fonctions nécessaires au jeu
+import pygame
 
 import Constantes
 import random
@@ -7,6 +8,8 @@ import time
 
 
 #########################          A1 - Paquet de cartes          #########################
+import Fonctions_pygame
+
 
 def paquet():
     pile = []
@@ -16,7 +19,7 @@ def paquet():
     return pile
 
 
-def valeur_carte(carte, j, scores):
+def valeur_carte(fenetre, polices, carte, j, scores):
     if carte[0] == "A":  # si la carte est un As
         if j.upper()[0:2] == "IA":
             valeur = 1 + random.randint(0,1) * 10
@@ -30,7 +33,9 @@ def valeur_carte(carte, j, scores):
                 print(j, "a choisi 11 comme valeur pour l'As")
                 return 11
         else:  # si le joueur est un humain
-            return input_protege("Quelle valeur choisissez vous pour l'as ? ", type_attendu=int, range_or_list="list", liste_reponses_possibles=[1, 11])  # demande la valeur souhaitée (1 ou 11)
+            return input_protege(question="Quelle valeur choisissez vous pour l'as ? ", type_attendu=int,
+                                 range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
+                                 polices=polices)  # demande la valeur souhaitée (1 ou 11)
     elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
         return 10
     else:  # si la carte est un nombre entre 2 et 9
@@ -53,12 +58,14 @@ def pioche_carte(pioche):  # pioche une seule carte
 
 #########################          A2 - Joueurs et scores          #########################
 
-def init_joueurs(n):
+def init_joueurs(fenetre, polices, n):
     joueurs = []
     for i in range(n):  # Pour chaque joueur on demande à l'utilisateur le nom
-        nom = input_protege("Quel est le nom du joueur " + str(i+1)+" ? ")
+        nom = input_protege(question="Quel est le nom du joueur " + str(i + 1) + " ? ", fenetre=fenetre,
+                            polices=polices)
         while nom in joueurs:  # contrôle pour ne pas avoir 2 fois le même nom
-            nom = input_protege("Ce nom est déjà utilisé, merci d'en entrer un autre : ")
+            nom = input_protege(question="Ce nom est déjà utilisé, merci d'en entrer un autre : ", fenetre=fenetre,
+                                polices=polices)
         joueurs.append(nom)
     return joueurs
 
@@ -70,7 +77,7 @@ def init_scores(joueurs, v=0):
     return scores
 
 
-def premier_tour(joueurs_partie, pioche, kopecs):
+def premier_tour(fenetre, polices, joueurs_partie, pioche, kopecs):
     mises = init_scores(joueurs_partie)
     scores = init_scores(joueurs_partie)
     for j in joueurs_partie:
@@ -78,16 +85,16 @@ def premier_tour(joueurs_partie, pioche, kopecs):
         for tour in range(2):  # on leur fait piocher 2 cartes
             jeu.append(pioche_carte(pioche))
         print(j, "a pioché", jeu, "au premier tour")
-        valeur_premier_tour(jeu, j, scores, kopecs, mises)
+        valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises)
         print()
         #time.sleep(2)
     print(Constantes.AFFICHAGE+"\n")
     return scores, mises
 
 
-def valeur_premier_tour(jeu, j, scores, kopecs, mises):
+def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
     for carte in jeu:     #
-        scores[j] += valeur_carte(carte, j, scores)
+        scores[j] += valeur_carte(fenetre, polices, carte, j, scores)
     if j.upper()[0:2] == "IA":
         print(j,": score =", scores[j], "et kopecs restants =", kopecs[j])
         mise = ia_mise(j, kopecs)
@@ -99,7 +106,9 @@ def valeur_premier_tour(jeu, j, scores, kopecs, mises):
     else:  # si le joueur est un humain
         print(j+", votre score est de", scores[j])
         print("Et il vous reste",kopecs[j],"kopecs")
-        mise = input_protege(j+" : combien voulez vous miser ? ", int, "range", (1, kopecs[j]+1))
+        jeu_texte = " et ".join(jeu)
+        mise = input_protege(question=j + ": Vous avez pioché " + jeu_texte + "     Il vous reste " + str(kopecs[j]) + " kopecs" + "    Combien voulez vous miser ? ", type_attendu=int, range_or_list="range",
+                             intervalle_reponses_possibles=(1, kopecs[j] + 1), fenetre=fenetre, polices=polices, taille_police="petite")
     mises[j] = mise
     kopecs[j] -= mise
 
@@ -115,10 +124,14 @@ def gagnant(scores):
 
 #########################          B1 - Tour d'un joueur          #########################
 
-def continuer_tour():
-    return input_protege("Souhaitez-vous piocher une autre carte ? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
-        "oui", "Oui", "OUI"]
-
+def continuer_tour(fenetre, polices, scores=None, encore=None, kopecs=None, j=None):
+    # return input_protege(question="Souhaitez-vous piocher une autre carte ? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"], fenetre=fenetre, polices=polices) in ["oui", "Oui", "OUI"]
+    fenetre.fill(Constantes.VERT_BLACKJACK)
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0]//2, Constantes.TAILLE_FENETRE[1]//3), "Voulez-vous continuer à jouer?", fenetre, polices["grande"])
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0]//2, 2*Constantes.TAILLE_FENETRE[1]//3), "* Appuyez sur ESPACE pour piocher, TAB pour arrêter de piocher *", fenetre, polices["petite"], couleur_texte=Constantes.GRIS)
+    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j)
+    Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+    return Fonctions_pygame.pygame_bool_input()
 
 def init_continuer_tour(joueurs_partie):
     encore = {}
@@ -128,12 +141,11 @@ def init_continuer_tour(joueurs_partie):
 
 
 def continuer_partie():
-    return input_protege("Souhaitez-vous commencer une autre partie ?  ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
-        "oui", "Oui", "OUI"]
+    # return input_protege(question="Souhaitez-vous commencer une autre partie ?  ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"], fenetre=fenetre, polices=polices) in ["oui", "Oui", "OUI"]
+    return Fonctions_pygame.pygame_bool_input()
 
-
-def tour_joueur(j, joueurs_partie, pioche, scores, encore):
-    print("Les scores actuels sont :",scores)
+def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kopecs):
+    print("Les scores actuels sont :", scores)
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     # est-ce que le joueur veut continuer à piocher ?
     if j.upper()[0:2] == "IA":
@@ -142,27 +154,27 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     elif j.upper()[0:3] == "BOB":
         encore[j] = choix_booste(scores, pioche, j)
     else:  # si le joueur est un humain
-        encore[j] = continuer_tour()   # On demande au joueur s'il veut continuer
+        encore[j] = continuer_tour(fenetre, polices, scores=scores, encore=encore, kopecs=kopecs, j=j)   # On demande au joueur s'il veut continuer
     # pioche ou non suivant la réponse précédente
     if encore[j]:   # si le joueur veut continuer
         carte = pioche_carte(pioche)
-        print(j,"a pioché",carte)
-        scores[j] += valeur_carte(carte, j, scores)  # On augmente le score de la valeur de la carte piochée
+        print(j, "a pioché", carte)
+        scores[j] += valeur_carte(fenetre, polices, carte, j, scores)  # On augmente le score de la valeur de la carte piochée
         print(j, ": votre score est maintenant de", scores[j])  # Pour se repérer
     else:
-        print(j,"n'a pas pioché")
+        print(j, "n'a pas pioché")
     if scores[j] > 21:    # si le joueur dépasse 21 points
-        joueurs_partie.remove(j) # On l'élimine
+        joueurs_partie.remove(j)  # On l'élimine
         encore[j] = False
     #time.sleep(2)
 
 
 #########################          B2 - Une partie complète          #########################
 
-def tour_complet(joueurs_partie, pioche, scores, encore):  # Pour chaque joueur encore dans la partie on lui fait un tour
+def tour_complet(fenetre, polices, joueurs_partie, pioche, scores, encore, kopecs):  # Pour chaque joueur encore dans la partie on lui fait un tour
     for j in scores.keys():
         if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
-            tour_joueur(j, joueurs_partie, pioche, scores, encore)
+            tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kopecs)
             print()
 
 
@@ -172,14 +184,20 @@ def partie_finie(joueurs_partie, scores, encore):
     return (21 in scores.values()) or (len(joueurs_partie) == 1) or (not(True in encore.values()))
 
 
-def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
+def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, mises):
     while not partie_finie(joueurs, scores, encore):    # Tant que  la partie n'est pas finie on repete un tour complet
-        tour_complet(joueurs, pioche, scores, encore)
+        tour_complet(fenetre, polices, joueurs, pioche, scores, encore, kopecs)
         # print(encore)  # affiche l'état du dictionnaire, pour vérification
     vainqueur = gagnant(scores)
     gain = sum(mises.values())
     kopecs[vainqueur] += gain
     print(vainqueur,"a gagné la partie et remporte", str(gain), "kopecs !")
+    fenetre.fill(Constantes.VERT_BLACKJACK)
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0]//2, Constantes.TAILLE_FENETRE[1]//3), vainqueur+" a gagné la partie et remporte "+str(gain)+" kopecs !", fenetre, polices["grande"])
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0]//2, Constantes.TAILLE_FENETRE[1]//2 - 100), "Les scores finaux sont: ", fenetre, polices["moyenne"], )
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0]//2, 2*Constantes.TAILLE_FENETRE[1]//3), "* Appuyez sur ESPACE pour continuer, ECHAP pour quitter le jeu *", fenetre, polices["petite"], couleur_texte=Constantes.GRIS)
+    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs)
+    Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
     
 
 #########################          C - Intelligence artificielle          #########################
@@ -255,7 +273,9 @@ def bob_mise(j, scores, kopecs):
 
 #########################          E - Diverses fonctions supplémentaires          #########################
 
-def input_protege(question, type_attendu=str, range_or_list="none", intervalle_reponses_possibles=(), liste_reponses_possibles=[]):
+def input_protege(question="", type_attendu=str, range_or_list="none", intervalle_reponses_possibles=(),
+                  liste_reponses_possibles=None, fenetre=None, polices=None, valeur_par_default="",
+                  avertissement="", affiche_scores=False, encore=None, scores=None, kopecs = None, j=-1, taille_police="moyenne"):
     """
     question = question à poser (str)
     type_attendu = type de variable attendu (str par defaut)
@@ -263,7 +283,10 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
     intervalle_reponses_possibles = à completer pour un test d'intervalle
     liste_reponses_possibles = à completer pour un test de liste
     """
-    saisie = input(question)
+    if liste_reponses_possibles is None:
+        liste_reponses_possibles = []
+    saisie = Fonctions_pygame.texte_input(fenetre, polices, question, valeur_par_default=valeur_par_default, avertissement=avertissement, affiche_scores=affiche_scores, scores=scores,
+                encore=encore, kopecs = kopecs, j=j, taille_police=taille_police)
     type_verifie = False
     valeur_verifie = False
 
@@ -272,9 +295,9 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
             saisie_modifie = type_attendu(saisie)
 
         except:
-            print("Votre saisie n'est pas du type", type_attendu.__name__, ". Merci de saisir un",
-                  type_attendu.__name__)
-            saisie = input()
+            avertissement = "Votre saisie n'est pas du type" + type_attendu.__name__ +  ". Merci de saisir un" + type_attendu.__name__
+            saisie = Fonctions_pygame.texte_input(fenetre, polices, question, valeur_par_default=valeur_par_default, avertissement=avertissement, affiche_scores=affiche_scores, scores=scores,
+                encore=encore, kopecs=kopecs, j=j, taille_police=taille_police)
 
         else:
             type_verifie = True
@@ -282,16 +305,15 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
                 if saisie_modifie in range(intervalle_reponses_possibles[0], intervalle_reponses_possibles[1]):
                     valeur_verifie = True
                 else:
-                    print("Votre saisie n'est pas comprise entre", intervalle_reponses_possibles[0], "et",
-                          str(intervalle_reponses_possibles[1]-1),". Merci de saisir une valeur comprise dans cet intervalle")
-                    saisie = input()
+                    avertissement = "Votre saisie n'est pas comprise entre" + str(intervalle_reponses_possibles[0]) + "et" + str(intervalle_reponses_possibles[1]-1) + ". Merci de saisir une valeur comprise dans cet intervalle"
+                    saisie = Fonctions_pygame.texte_input(fenetre, polices, question, valeur_par_default=valeur_par_default, avertissement=avertissement, affiche_scores=affiche_scores, scores=scores, encore=encore, kopecs = kopecs, j=j, taille_police=taille_police)
             elif range_or_list == "list":
                 if saisie_modifie in liste_reponses_possibles:
                     valeur_verifie = True
                 else:
-                    print("Votre saisie n'est pas comprise dans la liste : ", liste_reponses_possibles,
-                          ". Merci de saisir une valeur comprise dans : ", liste_reponses_possibles)
-                    saisie = input()
+                    avertissement = "Votre saisie n'est pas comprise dans la liste : " + str(liste_reponses_possibles) + ". Merci de saisir une valeur comprise dans : " + str(liste_reponses_possibles)
+                    saisie = Fonctions_pygame.texte_input(fenetre, polices, question, valeur_par_default=valeur_par_default, avertissement=avertissement, affiche_scores=affiche_scores, scores=scores,
+                 encore=encore, kopecs=kopecs, j=j, taille_police=taille_police)
             else:
                 valeur_verifie = True
             # print(valeur_verifie)

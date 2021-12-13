@@ -7,21 +7,27 @@ import Constantes
 
 import sys
 
+import Fonctions
+
 
 def initialisation_fenetre():
     pygame.init()
     fenetre = pygame.display.set_mode(Constantes.TAILLE_FENETRE)
     pygame.display.set_caption('BlackJack')
-    polices = {}
-    polices[police_petite] = pygame.font.Font('freesansbold.ttf', 18)
-    police_moyenne = pygame.font.Font('freesansbold.ttf', 24)
-    police_grande = pygame.font.Font('freesansbold.ttf', 32)
-    mise_a_jour_affichage(fenetre, police, "Bonjour")
+    polices = {"petite": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_PETITE),
+               "moyenne": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_MOYENNE),
+               "grande": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_GRANDE)}
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2), "Bonjour", fenetre,
+                      polices["grande"])
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] * 0.1, Constantes.TAILLE_FENETRE[1] * 0.9),
+                      "espace pour oui tab pour non", fenetre, polices["moyenne"])
+    mise_a_jour_affichage(fenetre, polices)
     return fenetre, polices
 
 
 def pygame_bool_input():
     while True:
+
         for evenement in pygame.event.get():
             if evenement.type == pygame.KEYDOWN:
 
@@ -34,10 +40,9 @@ def pygame_bool_input():
                     return False
 
 
-def mise_a_jour_affichage(fenetre, police, texte_a_afficher):
-    fenetre.fill(Constantes.VERT_BLACKJACK)
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2), texte_a_afficher, fenetre, police)
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] * 0.1, Constantes.TAILLE_FENETRE[1] * 0.9), "espace pour oui tab pour non", fenetre, police)
+def mise_a_jour_affichage(fenetre, polices):
+    #fenetre.fill(Constantes.VERT_BLACKJACK)
+    affichages_statiques(fenetre, polices)
     pygame.display.update()
 
 
@@ -48,19 +53,30 @@ def creer_boite_texte(position, texte_a_afficher, fenetre, police, couleur_texte
     fenetre.blit(texte, boite_texte)
 
 
-def texte_input(fenetre, police, question, valeur_par_default, avertissement="", affiche_scores=False, scores={}, joueurs_partie=[], encore={}):
-    print("texte_input")
+def texte_input(fenetre, polices, question, valeur_par_default="", avertissement="", affiche_scores=False, scores=None,
+                joueurs_partie=None, encore=None, kopecs=None, j=-1, taille_police=None):
+    if scores is None:
+        scores = {}
+    if encore is None:
+        encore = {}
+    if joueurs_partie is None:
+        joueurs_partie = []
     saisie = str(valeur_par_default)
     valide = False
     dernier_tick = time.time()
     affiche_curseur = True
     fenetre.fill(Constantes.VERT_BLACKJACK)
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2), saisie + "|"*int(affiche_curseur) + " "*(10-len(saisie)-1*int(affiche_curseur)), fenetre, police, couleur_fond=Constantes.VERT_OMBRE)
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), question, fenetre, police)
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 1.5), avertissement, fenetre, police, couleur_texte=Constantes.ROUGE)
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2),
+                      saisie + "|" * int(affiche_curseur) + " " * (10 - len(saisie) - 1 * int(affiche_curseur)),
+                      fenetre, polices["moyenne"], couleur_fond=Constantes.VERT_OMBRE)
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), question, fenetre,
+                      polices["grande"])
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 1.5), avertissement, fenetre,
+                      polices["petite"], couleur_texte=Constantes.ROUGE)
+    fenetre.fill(Constantes.VERT_BLACKJACK)
     if affiche_scores:
-        creer_boites_texte_scores(fenetre, police, scores, joueurs_partie, encore)
-    pygame.display.update()
+        creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j)
+    mise_a_jour_affichage(fenetre, polices)
     while not valide:
         for evenement in pygame.event.get():
             if evenement.type == pygame.KEYDOWN:
@@ -75,30 +91,48 @@ def texte_input(fenetre, police, question, valeur_par_default, avertissement="",
                     if len(saisie) < 10:
                         saisie += evenement.unicode
         fenetre.fill(Constantes.VERT_BLACKJACK)
-        creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2), saisie + "|"*int(affiche_curseur) + " "*(10-len(saisie)-1*int(affiche_curseur)), fenetre, police, couleur_fond=Constantes.VERT_OMBRE)
-        creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), question, fenetre, police)
-        creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 1.5), avertissement, fenetre, police, couleur_texte=Constantes.ROUGE)
+        creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2),
+                          saisie + "|" * int(affiche_curseur) + " " * (10 - len(saisie) - 1 * int(affiche_curseur)),
+                          fenetre, polices["moyenne"], couleur_fond=Constantes.VERT_OMBRE)
+        creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), question, fenetre,
+                          polices[taille_police])
+        creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 1.5), avertissement,
+                          fenetre,
+                          polices["petite"], couleur_texte=Constantes.ROUGE)
         if affiche_scores:
-            creer_boites_texte_scores(fenetre, police, scores, joueurs_partie, encore)
+            creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j)
+        affichages_statiques(fenetre, polices)
         pygame.display.update()
-        if time.time()-dernier_tick > 0.5:
+        if time.time() - dernier_tick > 0.5:
             dernier_tick = time.time()
             affiche_curseur = not affiche_curseur  # Inverse la valeur
     return saisie
 
 
-def creer_boites_texte_scores(fenetre, police, scores, joueurs_partie, encore):
-    nombre_de_joueurs = len(joueurs_partie)
+def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1):
+    joueurs_restants = []
+    for joueur in scores.keys():
+        if kopecs[joueur] != 0:
+            joueurs_restants.append(joueur)
+    nombre_de_joueurs = len(joueurs_restants)
     for index_joueur in range(nombre_de_joueurs):
-        nom_joueur = joueurs_partie[index_joueur]
+        nom_joueur = joueurs_restants[index_joueur]
         score = scores[nom_joueur]
+        taille_police = "moyenne"
+        if nom_joueur == j:
+            taille_police = "grande"
         if score > 21:
             couleur_texte = Constantes.ROUGE
-        elif score == 21:
+        elif nom_joueur == Fonctions.gagnant(scores):
             couleur_texte = Constantes.OR
         elif not encore[nom_joueur]:
             couleur_texte = Constantes.GRIS
         else:
             couleur_texte = Constantes.BLANC
         print(couleur_texte)
-        creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // nombre_de_joueurs)*index_joueur, Constantes.TAILLE_FENETRE[1] // 4), nom_joueur+" : "+str(scores[nom_joueur]), fenetre, police, couleur_texte=couleur_texte)
+        creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs+1))*(index_joueur+1), Constantes.TAILLE_FENETRE[1] // 2), "*"*(j == nom_joueur)+nom_joueur+" : "+str(scores[nom_joueur])+"*"*(j == nom_joueur), fenetre, polices[taille_police], couleur_texte=couleur_texte)
+
+
+def affichages_statiques(fenetre, polices):
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] * 0.07, Constantes.TAILLE_FENETRE[1] * 0.02), "ECHAP pour fermer", fenetre,
+                      polices["petite"])
