@@ -136,9 +136,9 @@ def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1, mi
         creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs+1))*(index_joueur+1), Constantes.TAILLE_FENETRE[1] // 2), "*"*(j == nom_joueur)+nom_joueur+" : "+str(scores[nom_joueur])+"*"*(j == nom_joueur), fenetre, polices[taille_police], couleur_texte=couleur_texte)
 
 
-def creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, vainqueur, gain):
+def creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, vainqueur, gain, scores):
     joueurs_restants = []
-    for joueur in kopecs.keys():
+    for joueur in scores.keys():
         if kopecs[joueur] != 0 or mises[joueur] != 0:
             joueurs_restants.append(joueur)
     nombre_de_joueurs = len(joueurs_restants)
