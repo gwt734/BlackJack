@@ -132,7 +132,7 @@ def gagnant(scores):
 
 #########################          B1 - Tour d'un joueur          #########################
 
-def continuer_tour(fenetre, polices, scores=None, encore=None, kopecs=None, j=None):
+def continuer_tour(fenetre, polices, scores=None, encore=None, kopecs=None, j=None, mises=None):
     # return input_protege(question="Souhaitez-vous piocher une autre carte ? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"], fenetre=fenetre, polices=polices) in ["oui", "Oui", "OUI"]
     fenetre.fill(Constantes.VERT_BLACKJACK)
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
@@ -140,7 +140,7 @@ def continuer_tour(fenetre, polices, scores=None, encore=None, kopecs=None, j=No
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
                                        "* Appuyez sur ESPACE pour piocher, TAB pour arrêter de piocher *", fenetre,
                                        polices["petite"], couleur_texte=Constantes.GRIS)
-    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j)
+    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
     return Fonctions_pygame.pygame_bool_input()
 
@@ -157,31 +157,43 @@ def continuer_partie():
     return Fonctions_pygame.pygame_bool_input()
 
 
-def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kopecs):
+def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kopecs, mises):
     print("Les scores actuels sont :", scores)
     print(j, " : votre score est : ", scores[j])  # Pour se repérer
     # est-ce que le joueur veut continuer à piocher ?
+    fenetre.fill(Constantes.VERT_BLACKJACK)
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
+                                       "Voulez-vous continuer à jouer?", fenetre, polices["grande"])
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
+                                       "* Appuyez sur ESPACE pour piocher, TAB pour arrêter de piocher *", fenetre,
+                                       polices["petite"], couleur_texte=Constantes.GRIS)
+    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
+    Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
     if j.upper()[0:3] == "IAR":  # IA qui prend des risques
+        time.sleep(2)
         score = scores[j]
         encore[j] = choix_intelligent(score, pioche, risque=True)
     elif j.upper()[0:3] == "IAS":  # IA qui privilégie la sécurité
+        time.sleep(2)
         score = scores[j]
         encore[j] = choix_intelligent(score, pioche, securite=True)
     elif j.upper()[0:2] == "IA":  # IA normale
+        time.sleep(2)
         score = scores[j]
         encore[j] = choix_intelligent(score, pioche)
     elif j.upper()[0:3] == "BOB":
+        time.sleep(2)
         encore[j] = choix_booste(scores, pioche, j)
     else:  # si le joueur est un humain
         encore[j] = continuer_tour(fenetre, polices, scores=scores, encore=encore, kopecs=kopecs,
-                                   j=j)  # On demande au joueur s'il veut continuer
+                                   j=j, mises=mises)  # On demande au joueur s'il veut continuer
     # pioche ou non suivant la réponse précédente
     if encore[j]:  # si le joueur veut continuer
         carte = pioche_carte(pioche)
         print(j, "a pioché", carte)
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           "Vous avez pioché " + str(carte), fenetre, polices["grande"])
+                                           j + " a pioché " + str(carte), fenetre, polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
         time.sleep(1)
         scores[j] += valeur_carte(fenetre, polices, carte, j,
@@ -189,19 +201,30 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
         print(j, ": votre score est maintenant de", scores[j])  # Pour se repérer
     else:
         print(j, "n'a pas pioché")
+        fenetre.fill(Constantes.VERT_BLACKJACK)
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
+                                           j + " a choisi de ne pas piocher.", fenetre, polices["grande"])
+        Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+        time.sleep(1)
     if scores[j] > 21:  # si le joueur dépasse 21 points
+        fenetre.fill(Constantes.VERT_BLACKJACK)
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
+                                           j + " a dépassé 21 et est donc éliminé de cette manche.", fenetre, polices["grande"])
+        Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+        time.sleep(1)
         joueurs_partie.remove(j)  # On l'élimine
         encore[j] = False
+
     # time.sleep(2)
 
 
 #########################          B2 - Une partie complète          #########################
 
 def tour_complet(fenetre, polices, joueurs_partie, pioche, scores, encore,
-                 kopecs):  # Pour chaque joueur encore dans la partie on lui fait un tour
+                 kopecs, mises):  # Pour chaque joueur encore dans la partie on lui fait un tour
     for j in scores.keys():
         if encore[j] and not (partie_finie(joueurs_partie, scores, encore)):
-            tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kopecs)
+            tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kopecs, mises)
             print()
 
 
@@ -213,7 +236,7 @@ def partie_finie(joueurs_partie, scores, encore):
 
 def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, mises):
     while not partie_finie(joueurs, scores, encore):  # Tant que  la partie n'est pas finie on repete un tour complet
-        tour_complet(fenetre, polices, joueurs, pioche, scores, encore, kopecs)
+        tour_complet(fenetre, polices, joueurs, pioche, scores, encore, kopecs, mises)
         # print(encore)  # affiche l'état du dictionnaire, pour vérification
     vainqueur = gagnant(scores)
     gain = sum(mises.values())
@@ -228,7 +251,7 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
                                        "* Appuyez sur ESPACE pour continuer, ECHAP pour quitter le jeu *", fenetre,
                                        polices["petite"], couleur_texte=Constantes.GRIS)
-    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs)
+    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, mises=mises)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
 
 
@@ -299,7 +322,7 @@ def bob_mise(j, scores, kopecs):
 def input_protege(question="", type_attendu=str, range_or_list="none", intervalle_reponses_possibles=(),
                   liste_reponses_possibles=None, fenetre=None, polices=None, valeur_par_default="",
                   avertissement="", affiche_scores=False, encore=None, scores=None, kopecs=None, j=-1,
-                  taille_police="moyenne"):
+                  taille_police="moyenne", mises=None):
     """
     question = question à poser (str)
     type_attendu = type de variable attendu (str par defaut)
@@ -352,7 +375,7 @@ def input_protege(question="", type_attendu=str, range_or_list="none", intervall
                                                           avertissement=avertissement, affiche_scores=affiche_scores,
                                                           scores=scores,
                                                           encore=encore, kopecs=kopecs, j=j,
-                                                          taille_police=taille_police)
+                                                          taille_police=taille_police, mises=mises)
             else:
                 valeur_verifie = True
             # print(valeur_verifie)

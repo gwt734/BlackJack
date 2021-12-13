@@ -54,11 +54,15 @@ def creer_boite_texte(position, texte_a_afficher, fenetre, police, couleur_texte
 
 
 def texte_input(fenetre, polices, question, valeur_par_default="", avertissement="", affiche_scores=False, scores=None,
-                joueurs_partie=None, encore=None, kopecs=None, j=-1, taille_police=None):
+                joueurs_partie=None, encore=None, kopecs=None, j=-1, taille_police=None, mises=None):
     if scores is None:
         scores = {}
     if encore is None:
         encore = {}
+    if kopecs is None:
+        kopecs = {}
+    if mises is None:
+        mises = {}
     if joueurs_partie is None:
         joueurs_partie = []
     saisie = str(valeur_par_default)
@@ -75,7 +79,7 @@ def texte_input(fenetre, polices, question, valeur_par_default="", avertissement
                       polices["petite"], couleur_texte=Constantes.ROUGE)
     fenetre.fill(Constantes.VERT_BLACKJACK)
     if affiche_scores:
-        creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j)
+        creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
     mise_a_jour_affichage(fenetre, polices)
     while not valide:
         for evenement in pygame.event.get():
@@ -100,7 +104,7 @@ def texte_input(fenetre, polices, question, valeur_par_default="", avertissement
                           fenetre,
                           polices["petite"], couleur_texte=Constantes.ROUGE)
         if affiche_scores:
-            creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j)
+            creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
         affichages_statiques(fenetre, polices)
         pygame.display.update()
         if time.time() - dernier_tick > 0.5:
@@ -109,10 +113,10 @@ def texte_input(fenetre, polices, question, valeur_par_default="", avertissement
     return saisie
 
 
-def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1):
+def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1, mises=None):
     joueurs_restants = []
     for joueur in scores.keys():
-        if kopecs[joueur] != 0:  #mises
+        if kopecs[joueur] != 0 or mises[joueur] != 0:
             joueurs_restants.append(joueur)
     nombre_de_joueurs = len(joueurs_restants)
     for index_joueur in range(nombre_de_joueurs):
