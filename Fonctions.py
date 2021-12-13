@@ -19,7 +19,7 @@ def paquet():
     return pile
 
 
-def valeur_carte(fenetre, polices, carte, j, scores):
+def valeur_carte(fenetre, polices, carte, j, scores, jeu=None):
     if carte[0] == "A":  # si la carte est un As
         if j.upper()[0:3] == "IAR":  # IA qui prend des risques
             print(j, "a choisi 11 comme valeur pour l'As")
@@ -39,9 +39,15 @@ def valeur_carte(fenetre, polices, carte, j, scores):
                 print(j, "a choisi 11 comme valeur pour l'As")
                 return 11
         else:  # si le joueur est un humain
-            return input_protege(question="Quelle valeur choisissez vous pour l'as ? ", type_attendu=int,
+            if jeu is None:
+                return input_protege(question="Quelle valeur choisissez vous pour l'as ? ", type_attendu=int,
                                  range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
                                  polices=polices)  # demande la valeur souhaitée (1 ou 11)
+            else:
+                jeu_texte = " et ".join(jeu)
+                return input_protege(question="Vous avez pioché " + jeu_texte + ". Quelle valeur choisissez vous pour l'as ? ", type_attendu=int,
+                                 range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
+                                 polices=polices, taille_police="moyenne")  # demande la valeur souhaitée (1 ou 11)
     elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
         return 10
     else:  # si la carte est un nombre entre 2 et 9
@@ -100,7 +106,7 @@ def premier_tour(fenetre, polices, joueurs_partie, pioche, kopecs):
 
 def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
     for carte in jeu:  #
-        scores[j] += valeur_carte(fenetre, polices, carte, j, scores)
+        scores[j] += valeur_carte(fenetre, polices, carte, j, scores, jeu)
     jeu_texte = " et ".join(jeu)
     if j.upper()[0:2] == "IA":
         print(j, ": score =", scores[j], "et kopecs restants =", kopecs[j])
