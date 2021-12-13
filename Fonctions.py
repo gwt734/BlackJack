@@ -32,7 +32,7 @@ def valeur_carte(carte, j, scores):
             if scores[j] >= 11:
                 print(j, "a choisi 1 comme valeur pour l'As")
                 return 1
-            else :
+            else:
                 print(j, "a choisi 11 comme valeur pour l'As")
                 return 11
         else:  # si le joueur est un humain
@@ -71,12 +71,13 @@ def init_joueurs(n):
 
 def init_scores(joueurs, v=0):
     scores = {}
-    for i in joueurs:   # Pour chaque joueur
-        scores[i] = v   # On assigne la valeur v au score du joueur actuel
+    for joueur in joueurs:   # Pour chaque joueur
+        scores[joueur] = v   # On assigne la valeur v au score du joueur actuel
     return scores
 
 
 def premier_tour(joueurs_partie, pioche, kopecs):
+    print(Constantes.AFFICHAGE)  # pour un affichage aéré dans la console
     mises = init_scores(joueurs_partie)
     scores = init_scores(joueurs_partie)
     for j in joueurs_partie:
@@ -124,13 +125,6 @@ def gagnant(scores):
 def continuer_tour():
     return input_protege("Souhaitez-vous piocher une autre carte ? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
-
-
-def init_continuer_tour(joueurs_partie):
-    encore = {}
-    for joueur in joueurs_partie:  # Pour chaque joueur
-        encore[joueur] = True
-    return encore
 
 
 def continuer_partie():
@@ -198,7 +192,8 @@ def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
 #########################          C - Intelligence artificielle          #########################
 
 def moyenne_paquet(pioche):
-    """fonction qui calcule la valeur moyenne d'un paquet de carte"""
+    """Fonction qui calcule la valeur moyenne d'un paquet de carte, à la manière d'un joueur qui compterait les cartes
+    Fcontion utilisée par les 2 IA"""
     valeurs = []
     for carte in pioche:
         if carte[0] == "A":
@@ -211,9 +206,11 @@ def moyenne_paquet(pioche):
 
 
 def choix_intelligent(score, pioche, risque=False, securite=False):
-    """Intelligence artificielle qui décide de continuer ou non en fonction de son score et des cartes déjà tirées de la pioche"""
+    """Intelligence artificielle qui décide de continuer ou non en fonction de son score et des cartes déjà tirées de la pioche
+    Renvoie un booléen (piocher ou non) qui correspond a la valeur du joueur dans le dictionnaire 'encore'
+    Appelée par le nom 'IA' avec potentiellement la lettre 'r' ou 's' après indiquant s'il l'IA prend des risques ou joue la sécurité"""
     estimation = moyenne_paquet(pioche)  # autour de 6.5
-    if not(risque or securite) or (risque and securite):  # si l'algorithme doit jouer de manière optimale
+    if not(risque or securite) or (risque and securite):  # si l'algorithme doit jouer de manière optimale, raisonnée
         return score <= 21 - estimation
     elif risque:  # si l'algorithme doit prendre des risques
         return score <= 21 - estimation / 1.5  # souvent vrai, risque de dépasser 21
@@ -221,8 +218,10 @@ def choix_intelligent(score, pioche, risque=False, securite=False):
         return score <= 21 - estimation * 1.5  # rarement vrai, peu de chances de dépasser 21
 
 
-def choix_booste(scores, pioche, j):  # El famoso BOB
-    """ Intelligence artificielle qui tient compte de son score, de la pioche et de la main des autres joueurs"""
+def choix_booste(scores, pioche, j):
+    """Intelligence artificielle qui tient compte de son score, de la pioche et de la main des autres joueurs
+    Renvoie un booléen (piocher ou non) qui correspond a la valeur du joueur dans le dictionnaire 'encore'
+    Appelée par le nom 'Bob' """
     estimation = moyenne_paquet(pioche)
     if estimation <= 21 - scores[j]:
         return True  # il faut continuer
@@ -237,7 +236,7 @@ def choix_booste(scores, pioche, j):  # El famoso BOB
 
 
 def ia_mise(j, kopecs):
-    """mise arbitraire dépendant du nombre de kopecs restants"""
+    """Mise arbitraire dépendant du nombre de kopecs restants"""
     valeur = int(0.3 * kopecs[j])+10
     while valeur > kopecs[j]:  # pour pas que le nombre de kopecs misés soit supérieur au nombre de kopecs restants
         valeur -= 1
@@ -245,7 +244,7 @@ def ia_mise(j, kopecs):
 
 
 def bob_mise(j, scores, kopecs):
-    """mise qui dépend du score du joueur et du score des autres"""
+    """Mise qui dépend du score du joueur et du score des autres"""
     if scores[j] == 21:
         valeur = kopecs[j]
     elif scores[j] in [20,19] and (21 not in scores.values()):
@@ -303,7 +302,7 @@ def input_protege(question, type_attendu=str, range_or_list="none", intervalle_r
 
 
 def fin_de_partie(kopecs, joueurs):
-    """affichage de fin de partie pour que les joueurs se repèrent"""
+    """Affichage de fin de partie pour que les joueurs se repèrent et calcul de la liste des joueurs restants"""
     print(Constantes.AFFICHAGE)
     for joueur in kopecs:
         if kopecs[joueur] == 0:

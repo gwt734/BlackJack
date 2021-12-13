@@ -16,15 +16,14 @@ def main():
 
         pioche = Fonctions.init_pioche(nb_joueurs)
         # print(pioche[:7])  # affiche les 7 cartes sur le haut de la pioche, pour vérification
-        encore = Fonctions.init_continuer_tour(joueurs_partie)
-        print(Constantes.AFFICHAGE)  # pour un affichage aéré dans la console
+        encore = Fonctions.init_scores(joueurs_partie, v=True)  # création d'un dictionnaire de booléens indiquant si chaque joueur veut continuer à piocher ou non
         scores, mises = Fonctions.premier_tour(joueurs_partie, pioche, kopecs)
         # print(pioche[:6])  # affiche les 6 cartes sur le haut de la pioche, pour vérification
         Fonctions.partie_complete(joueurs_partie, pioche, scores, encore, kopecs, mises)
         joueurs_partie = Fonctions.fin_de_partie(kopecs, joueurs)  # calcul des joueurs restants + affichage de fin de partie
 
         if len(joueurs_partie) == 1:  # si il ne reste qu'un joueur avec des kopecs, le jeu s'arrête
-            print(joueurs_partie[0],"est le seul joueur en mesure de continuer, nous avons notre grand gagant !")
+            print(joueurs_partie[0], "est le seul joueur en mesure de continuer, nous avons notre grand gagant !")
             break
         veut_rejouer = Fonctions.continuer_partie()
     Fonctions.affichage_fin_de_jeu(kopecs, nb_parties)  # affichage récapitulatif des parties
