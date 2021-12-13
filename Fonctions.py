@@ -101,18 +101,28 @@ def premier_tour(fenetre, polices, joueurs_partie, pioche, kopecs):
 def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
     for carte in jeu:  #
         scores[j] += valeur_carte(fenetre, polices, carte, j, scores)
+    jeu_texte = " et ".join(jeu)
     if j.upper()[0:2] == "IA":
         print(j, ": score =", scores[j], "et kopecs restants =", kopecs[j])
         mise = ia_mise(j, kopecs)
         print(j, "a misé", mise)
+        fenetre.fill(Constantes.VERT_BLACKJACK)
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
+                                           j + " a pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
+        Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+        time.sleep(2)
     elif j.upper()[0:3] == "BOB":
         print(j, ": score =", scores[j], "et kopecs restants =", kopecs[j])
         mise = bob_mise(j, scores, kopecs)
         print(j, "a misé", mise)
+        fenetre.fill(Constantes.VERT_BLACKJACK)
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
+                                           j + " a pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
+        Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+        time.sleep(2)
     else:  # si le joueur est un humain
         print(j + ", votre score est de", scores[j])
         print("Et il vous reste", kopecs[j], "kopecs")
-        jeu_texte = " et ".join(jeu)
         mise = input_protege(question=j + ": Vous avez pioché " + jeu_texte + "     Il vous reste " + str(
             kopecs[j]) + " kopecs" + "    Combien voulez vous miser ? ", type_attendu=int, range_or_list="range",
                              intervalle_reponses_possibles=(1, kopecs[j] + 1), fenetre=fenetre, polices=polices,
