@@ -18,7 +18,7 @@ Simple téléchargement de tous les fichiers en faisant attention à les laisser
 
 ## Exécution du jeu :
 Il existe différentes manières de lancer le jeu :
-* Double click sur le fichier blackjack_start.bat
+* Double click sur le fichier blackjack_start.bat (cette méthode reste grandement dépendante des version de programmes de l'appareil utilisé et risque de ne pas fonctionner partout)
 * Dans l'invite de commandes Windows en naviguant dans le dossier où les fichiers du jeu sont enregistrés avec la commande cd puis en lançant le fichier avec la commande python3
   ```console
   cd %Chemin d'accès du dossier où les fichiers du jeux sont enregistrés%
