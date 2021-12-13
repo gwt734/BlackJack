@@ -270,7 +270,8 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, mises=mises)
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2*Constantes.TAILLE_FENETRE[1] // 3 - 100),
                                        "Les gains de cette partie: ", fenetre, polices["moyenne"], )
-    Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, vainqueur, gain, scores)
+    Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores)
+    Fonctions_pygame.creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, scores)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
 
 
