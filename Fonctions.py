@@ -41,13 +41,15 @@ def valeur_carte(fenetre, polices, carte, j, scores, jeu=None):
         else:  # si le joueur est un humain
             if jeu is None:
                 return input_protege(question="Quelle valeur choisissez vous pour l'as ? ", type_attendu=int,
-                                 range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
-                                 polices=polices)  # demande la valeur souhaitée (1 ou 11)
+                                     range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
+                                     polices=polices)  # demande la valeur souhaitée (1 ou 11)
             else:
                 jeu_texte = " et ".join(jeu)
-                return input_protege(question="Vous avez pioché " + jeu_texte + ". Quelle valeur choisissez vous pour l'as ? ", type_attendu=int,
-                                 range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
-                                 polices=polices, taille_police="moyenne")  # demande la valeur souhaitée (1 ou 11)
+                return input_protege(
+                    question="Vous avez pioché " + jeu_texte + ". Quelle valeur choisissez vous pour l'as ? ",
+                    type_attendu=int,
+                    range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
+                    polices=polices, taille_police="moyenne")  # demande la valeur souhaitée (1 ou 11)
     elif carte[0] in "VDR1":  # si la carte est une figure ou un 10
         return 10
     else:  # si la carte est un nombre entre 2 et 9
@@ -106,7 +108,10 @@ def premier_tour(fenetre, polices, joueurs_partie, pioche, kopecs):
 
 def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
     for carte in jeu:  #
-        scores[j] += valeur_carte(fenetre, polices, carte, j, scores, jeu)
+        if carte[0] == "A" and j.upper()[0:2] == "IA" and scores[j] == 11:
+            scores[j] += 1
+        else:
+            scores[j] += valeur_carte(fenetre, polices, carte, j, scores, jeu)
     jeu_texte = " et ".join(jeu)
     if j.upper()[0:2] == "IA":
         print(j, ": score =", scores[j], "et kopecs restants =", kopecs[j])
@@ -114,7 +119,8 @@ def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
         print(j, "a misé", mise)
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           j + " a pioché " + jeu_texte + " et a misé: " + str(mise), fenetre, polices["grande"])
+                                           j + " a pioché " + jeu_texte + " et a misé: " + str(mise), fenetre,
+                                           polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
         time.sleep(3)
     elif j.upper()[0:3] == "BOB":
@@ -123,7 +129,8 @@ def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
         print(j, "a misé", mise)
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           j + " a pioché " + jeu_texte + " et a misé: " + str(mise), fenetre, polices["grande"])
+                                           j + " a pioché " + jeu_texte + " et a misé: " + str(mise), fenetre,
+                                           polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
         time.sleep(3)
     else:  # si le joueur est un humain
@@ -186,7 +193,7 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
                                            polices["petite"], couleur_texte=Constantes.GRIS)
     else:
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
-                                           "* " + j +" réfléchis *", fenetre,
+                                           "* " + j + " réfléchis *", fenetre,
                                            polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
@@ -274,7 +281,7 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
                                        "* Appuyez sur ESPACE pour continuer, ECHAP pour quitter le jeu *", fenetre,
                                        polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, mises=mises)
-    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2*Constantes.TAILLE_FENETRE[1] // 3 - 100),
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3 - 100),
                                        "Les kopecs restants: ", fenetre, polices["moyenne"], )
     Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores)
     Fonctions_pygame.creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, scores)

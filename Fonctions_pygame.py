@@ -168,3 +168,12 @@ def creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, s
 def affichages_statiques(fenetre, polices):
     creer_boite_texte((Constantes.TAILLE_FENETRE[0] * 0.07, Constantes.TAILLE_FENETRE[1] * 0.02), "ECHAP pour fermer", fenetre,
                       polices["petite"])
+
+
+def fin_partie():
+    while True:
+        for evenement in pygame.event.get():
+            if evenement.type == pygame.KEYDOWN:
+                if evenement.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
