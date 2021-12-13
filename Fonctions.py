@@ -258,9 +258,9 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
                                        "* Appuyez sur ESPACE pour continuer, ECHAP pour quitter le jeu *", fenetre,
                                        polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, mises=mises)
-    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2 - 100),
-                                       "Les scores finaux sont: ", fenetre, polices["moyenne"], )
-    Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, kopecs, encore, kopecs, mises=mises)
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2*Constantes.TAILLE_FENETRE[1] // 3 - 100),
+                                       "Les gains de cette partie: ", fenetre, polices["moyenne"], )
+    Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, vainqueur, gain)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
 
 
