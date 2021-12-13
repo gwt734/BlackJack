@@ -108,7 +108,7 @@ def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
         print(j, "a misé", mise)
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           j + " à pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
+                                           j + " a pioché " + jeu_texte + " et a misé: " + str(mise), fenetre, polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
         time.sleep(3)
     elif j.upper()[0:3] == "BOB":
@@ -117,7 +117,7 @@ def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
         print(j, "a misé", mise)
         fenetre.fill(Constantes.VERT_BLACKJACK)
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                           j + " à pioché " + jeu_texte + " et à misé: " + str(mise), fenetre, polices["grande"])
+                                           j + " a pioché " + jeu_texte + " et a misé: " + str(mise), fenetre, polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
         time.sleep(3)
     else:  # si le joueur est un humain
@@ -227,7 +227,7 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
                                            j + " a dépassé 21 et est donc éliminé de cette manche.", fenetre,
                                            polices["grande"])
         Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
-        time.sleep(1)
+        time.sleep(2)
         joueurs_partie.remove(j)  # On l'élimine
         encore[j] = False
 
