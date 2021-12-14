@@ -60,6 +60,7 @@ def creer_boite_texte(position, texte_a_afficher, fenetre, police, couleur_texte
 
 def texte_input(fenetre, polices, question, valeur_par_default="", avertissement="", affiche_scores=False, scores=None,
                 joueurs_partie=None, encore=None, kopecs=None, j=-1, taille_police=None, mises=None):
+    """Fonction input adaptés à l'affichage graphique"""
     if scores is None:
         scores = {}
     if encore is None:
@@ -119,6 +120,7 @@ def texte_input(fenetre, polices, question, valeur_par_default="", avertissement
 
 
 def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1, mises=None):
+    """Créer les boites de texte qui permettent l"affichage des scores"""
     joueurs_restants = []
     for joueur in scores.keys():
         if kopecs[joueur] != 0 or mises[joueur] != 0:
@@ -145,6 +147,7 @@ def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1, mi
 
 
 def creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores):
+    """Créer les boites de texte qui permettent l"affichage des kopecs"""
     joueurs_restants = []
     for joueur in scores.keys():
         if kopecs[joueur] != 0 or mises[joueur] != 0:
@@ -159,6 +162,7 @@ def creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores):
 
 
 def creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, scores):
+    """Créer les boites de texte qui permettent l"affichage des gains (ou pertes)"""
     joueurs_restants = []
     for joueur in scores.keys():
         if kopecs[joueur] != 0 or mises[joueur] != 0:
@@ -180,12 +184,14 @@ def creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, s
 
 
 def affichages_statiques(fenetre, polices):
+    """Fonction qui permet d'afficher des choses tout le temps"""
     creer_boite_texte((Constantes.TAILLE_FENETRE[0] * 0.07, Constantes.TAILLE_FENETRE[1] * 0.02), "ECHAP pour fermer",
                       fenetre,
                       polices["petite"])
 
 
 def fin_partie():
+    """Attends que l'utilisateur appuie sur la touche échap pour fermer le jeu"""
     while True:
         for evenement in pygame.event.get():
             if evenement.type == pygame.KEYDOWN:

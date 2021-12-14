@@ -19,7 +19,7 @@ def paquet():
     return pile
 
 
-def valeur_carte(fenetre, polices, carte, j, scores, jeu=None):
+def valeur_carte(fenetre, polices, carte, j, scores, jeu=None, nom_joueur=None):
     if carte[0] == "A":  # si la carte est un As
         if j.upper()[0:3] == "IAR":  # IA qui prend des risques
             print(j, "a choisi 11 comme valeur pour l'As")
@@ -46,7 +46,7 @@ def valeur_carte(fenetre, polices, carte, j, scores, jeu=None):
             else:
                 jeu_texte = " et ".join(jeu)
                 return input_protege(
-                    question="Vous avez pioché " + jeu_texte + ". Quelle valeur choisissez vous pour l'as ? ",
+                    question=nom_joueur + ", vous avez pioché " + jeu_texte + ". Quelle valeur choisissez vous pour l'as ? ",
                     type_attendu=int,
                     range_or_list="list", liste_reponses_possibles=[1, 11], fenetre=fenetre,
                     polices=polices, taille_police="moyenne")  # demande la valeur souhaitée (1 ou 11)
@@ -111,7 +111,7 @@ def valeur_premier_tour(fenetre, polices, jeu, j, scores, kopecs, mises):
         if carte[0] == "A" and j.upper()[0:2] == "IA" and scores[j] == 11:
             scores[j] += 1
         else:
-            scores[j] += valeur_carte(fenetre, polices, carte, j, scores, jeu)
+            scores[j] += valeur_carte(fenetre, polices, carte, j, scores, jeu, j)
     jeu_texte = " et ".join(jeu)
     if j.upper()[0:2] == "IA":
         print(j, ": score =", scores[j], "et kopecs restants =", kopecs[j])
@@ -390,7 +390,7 @@ def input_protege(question="", type_attendu=str, range_or_list="none", intervall
                     valeur_verifie = True
                 else:
                     avertissement = "Votre saisie n'est pas comprise entre" + str(
-                        intervalle_reponses_possibles[0]) + "et" + str(intervalle_reponses_possibles[
+                        intervalle_reponses_possibles[0]) + " et " + str(intervalle_reponses_possibles[
                                                                            1] - 1) + ". Merci de saisir une valeur comprise dans cet intervalle"
                     saisie = Fonctions_pygame.texte_input(fenetre, polices, question,
                                                           valeur_par_default=valeur_par_default,
