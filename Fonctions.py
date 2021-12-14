@@ -17,6 +17,8 @@ def paquet():
 
 
 def valeur_carte(carte, j, scores):
+    """Affecte une valeur à une carte, cas particulier de l'As pour chacune des 5 situations suivantes :
+    le joueur est une des 4 IA (4 différentes manières de choisir) ou le joueur est un humain (on lui demande)"""
     if carte[0] == "A":  # si la carte est un As
         if j.upper()[0:3] == "IAR":  # IA qui prend des risques
             print(j, "a choisi 11 comme valeur pour l'As")
@@ -28,8 +30,8 @@ def valeur_carte(carte, j, scores):
             valeur = 1 + random.randint(0,1) * 10  # choix aléatoire entre 1 et 11
             print(j, "a choisi", valeur, "comme valeur pour l'As")
             return valeur
-        elif j.upper()[0:3] == "BOB":
-            if scores[j] >= 11:
+        elif j.upper()[0:3] == "BOB":  # choix en fonction du score
+            if scores[j] >= 11:  # test pour ne pas dépasser 21
                 print(j, "a choisi 1 comme valeur pour l'As")
                 return 1
             else:
@@ -44,22 +46,21 @@ def valeur_carte(carte, j, scores):
 
 
 def init_pioche(n):
+    """Crée la pioche en fonction du nombre de joueurs"""
     pioche = paquet() * n  # crée le paquet non mélangé
     random.shuffle(pioche)
     return pioche
 
 
-def pioche_carte(pioche):  # pioche une seule carte
-    """retour = []
-    for i in range(x): # autant de fois que de cartes à piocher
-        retour=pioche.pop(0)  # enlève la carte de la pioche et la met dans la liste de retour
-    return retour[]"""
+def pioche_carte(pioche):
+    """Nous avons décidé que cette fonction ne ferait piocher qu'une carte, le cas particulier du premier tour étant géré différemment"""
     return pioche.pop(0)
 
 
 #########################          A2 - Joueurs et scores          #########################
 
 def init_joueurs(n):
+    """Crée la liste des joueurs de taille n, chaque joueur ayant un nom différent"""
     joueurs = []
     for i in range(n):  # Pour chaque joueur on demande à l'utilisateur le nom
         nom = input_protege("Quel est le nom du joueur " + str(i+1)+" ? ")
@@ -70,6 +71,7 @@ def init_joueurs(n):
 
 
 def init_scores(joueurs, v=0):
+    """Fonction utile pour créer tous les dictionnaires relatifs à la partie avec différentes valeurs de v"""
     scores = {}
     for joueur in joueurs:   # Pour chaque joueur
         scores[joueur] = v   # On assigne la valeur v au score du joueur actuel
@@ -77,24 +79,30 @@ def init_scores(joueurs, v=0):
 
 
 def premier_tour(joueurs_partie, pioche, kopecs):
+    """Fonction qui gère la distribution de 2 cartes par personne, le choix des mises et assure un bel affichage"""
     print(Constantes.AFFICHAGE)  # pour un affichage aéré dans la console
-    mises = init_scores(joueurs_partie)
+    mises = init_scores(joueurs_partie)  # création du dictionnaire des mises et scores avec pour valeur 0
     scores = init_scores(joueurs_partie)
     for j in joueurs_partie:
         jeu = []
         for tour in range(2):  # on leur fait piocher 2 cartes
             jeu.append(pioche_carte(pioche))
         print(j, "a pioché", jeu, "au premier tour")
-        valeur_premier_tour(jeu, j, scores, kopecs, mises)
+        valeur_premier_tour(jeu, j, scores, kopecs, mises)  # fonction ci-dessous
         print()
-        # time.sleep(2)  # ajout d'un délai (2 secondes) pour permettre aux humains de lire les choix des IA
+        time.sleep(2)  # ajout d'un délai (2 secondes) pour permettre aux humains de lire les choix des IA
     print(Constantes.AFFICHAGE+"\n")
     return scores, mises
 
 
 def valeur_premier_tour(jeu, j, scores, kopecs, mises):
+    """Fonction intermédiaire appelée pour chaque joueur qui gère le choix des mises et l'affichage du choix des IA
+    si le joueur est une IA, on appelle les fonctions correspondates aux mises des 2 types d'IA"""
     for carte in jeu:
-        scores[j] += valeur_carte(carte, j, scores)
+        if carte[0] == "A" and j.upper()[0:2] == "IA" and scores[j] == 11:  # cas très particulier où "IAr" ou "IA"
+            scores[j] += 1                          # pioche 2 As au premier tour et choisirait 2 fois la valeur 11
+        else:
+            scores[j] += valeur_carte(carte, j, scores)
     if j.upper()[0:2] == "IA":
         print(j,": score =", scores[j], "et kopecs restants =", kopecs[j])
         mise = ia_mise(j, kopecs)
@@ -112,9 +120,10 @@ def valeur_premier_tour(jeu, j, scores, kopecs, mises):
 
 
 def gagnant(scores):
+    """Fonction appelée en fin de partie qui renvoie le nom du gagnant"""
     maximum = 0
     for i in scores.keys():     # On parcourt les joueurs
-        if maximum < scores[i] <= 21:
+        if maximum < scores[i] <= 21:  # en cas d'égalité, c'est le premier joueur qui l'emporte
             maximum = scores[i]
             joueur_gagnant = i
     return joueur_gagnant
@@ -123,16 +132,22 @@ def gagnant(scores):
 #########################          B1 - Tour d'un joueur          #########################
 
 def continuer_tour():
+    """réponses limitées à OUI ou NON (majuscules ou pas) par le input_protege()
+    renvoie un booléen représentant si la réponse est un OUI"""
     return input_protege("Souhaitez-vous piocher une autre carte ? ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
 def continuer_partie():
+    """réponses limitées à OUI ou NON (majuscules ou pas) par le input_protege()
+    renvoie un booléen représentant si la réponse est un OUI"""
     return input_protege("Souhaitez-vous commencer une autre partie ?  ", range_or_list="list", liste_reponses_possibles=["oui", "Oui", "OUI", "non", "Non", "NON"]) in [
         "oui", "Oui", "OUI"]
 
 
 def tour_joueur(j, joueurs_partie, pioche, scores, encore):
+    """Fonction appelée pour chaque joueur qui affiche son score et lui demande s'il veut piocher
+    Si le joueur est une IA, on appelle les fonctions correspondates aux choix des 4 IA différentes"""
     print("Les scores actuels sont :",scores)
     print(j, " : votre score est : ", scores[j])    # Pour se repérer
     # est-ce que le joueur veut continuer à piocher ?
@@ -160,13 +175,13 @@ def tour_joueur(j, joueurs_partie, pioche, scores, encore):
     if scores[j] > 21:    # si le joueur dépasse 21 points
         joueurs_partie.remove(j) # On l'élimine
         encore[j] = False
-    # time.sleep(2)  # ajout d'un délai (2 secondes) pour permettre aux humains de lire les choix des IA
+    time.sleep(2)  # ajout d'un délai (2 secondes) pour permettre aux humains de lire les choix des IA
 
 
 #########################          B2 - Une partie complète          #########################
 
 def tour_complet(joueurs_partie, pioche, scores, encore):
-    """Pour chaque joueur encore dans la partie, on lui fait un tour"""
+    """Pour chaque joueur encore dans la partie, si le joueur veut continuer et que la partie n'est pas finie, on lui fait un tour"""
     for j in scores.keys():
         if encore[j] and not(partie_finie(joueurs_partie, scores, encore)):
             tour_joueur(j, joueurs_partie, pioche, scores, encore)
@@ -180,6 +195,7 @@ def partie_finie(joueurs_partie, scores, encore):
 
 
 def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
+    """appelle la fonction tour_complet jusqu'à ce que la partie soit finie"""
     while not partie_finie(joueurs, scores, encore):    # Tant que  la partie n'est pas finie on repete un tour complet
         tour_complet(joueurs, pioche, scores, encore)
         # print(encore)  # affiche l'état du dictionnaire, pour vérification
@@ -193,7 +209,7 @@ def partie_complete(joueurs, pioche, scores, encore, kopecs, mises):
 
 def moyenne_paquet(pioche):
     """Fonction qui calcule la valeur moyenne d'un paquet de carte, à la manière d'un joueur qui compterait les cartes
-    Fcontion utilisée par les 2 IA"""
+    Fcontion utilisée par les 2 types IA"""
     valeurs = []
     for carte in pioche:
         if carte[0] == "A":
@@ -207,7 +223,7 @@ def moyenne_paquet(pioche):
 
 def choix_intelligent(score, pioche, risque=False, securite=False):
     """Intelligence artificielle qui décide de continuer ou non en fonction de son score et des cartes déjà tirées de la pioche
-    Renvoie un booléen (piocher ou non) qui correspond a la valeur du joueur dans le dictionnaire 'encore'
+    Renvoie un booléen (piocher ou non) qui correspondra a la valeur du joueur dans le dictionnaire 'encore'
     Appelée par le nom 'IA' avec potentiellement la lettre 'r' ou 's' après indiquant s'il l'IA prend des risques ou joue la sécurité"""
     estimation = moyenne_paquet(pioche)  # autour de 6.5
     if not(risque or securite) or (risque and securite):  # si l'algorithme doit jouer de manière optimale, raisonnée
@@ -220,18 +236,18 @@ def choix_intelligent(score, pioche, risque=False, securite=False):
 
 def choix_booste(scores, pioche, j):
     """Intelligence artificielle qui tient compte de son score, de la pioche et de la main des autres joueurs
-    Renvoie un booléen (piocher ou non) qui correspond a la valeur du joueur dans le dictionnaire 'encore'
+    Renvoie un booléen (piocher ou non) qui correspondra a la valeur du joueur dans le dictionnaire 'encore'
     Appelée par le nom 'Bob' """
     estimation = moyenne_paquet(pioche)
-    if estimation <= 21 - scores[j]:
+    if estimation <= 21 - scores[j]:  # si on peut piocher sans trop de risques
         return True  # il faut continuer
-    points = dict(scores)  # création d'un dictionnaire intermédiaire ne servant qu'à cette IA
+    points = dict(scores)  # création d'un dictionnaire local ne servant qu'à cette IA
     for joueur in scores:  # il contient tous les scores en dessous de 21, donc les joueurs encore dans la partie
         if scores[joueur] > 21:
             del points[joueur]
     meilleur = max(points.values())  # nous pouvons donc rechercher le max des valeurs de ce dictionnaire
     if meilleur != scores[j]:  # si un joueur a plus de points que Bob
-        return True
+        return True  # il faut piocher
     return False
 
 
@@ -246,7 +262,7 @@ def ia_mise(j, kopecs):
 def bob_mise(j, scores, kopecs):
     """Mise qui dépend du score du joueur et du score des autres"""
     if scores[j] == 21:
-        valeur = kopecs[j]
+        valeur = kopecs[j]  # tapis si 21 dès le premier tour
     elif scores[j] in [20,19] and (21 not in scores.values()):
         valeur = int(0.4 * kopecs[j]) + 1
     else:
@@ -260,6 +276,8 @@ def bob_mise(j, scores, kopecs):
 
 def input_protege(question, type_attendu=str, range_or_list="none", intervalle_reponses_possibles=(), liste_reponses_possibles=[]):
     """
+    Fonction qui permet d'effectuer des inputs sans risques d'erreur fatales au programme. (utilisée pour toutes les demandes à l'utilisateur)
+    elle permet aussi de spécifier un type et un intervalle ou une liste de réponses possibles comme c'est souvent nécessaire.
     question = question à poser (str)
     type_attendu = type de variable attendu (str par defaut)
     range_or_list = "range" pour un intervalle, "list" pour une liste de valeur, rien pour ignorer la condition
