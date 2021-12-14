@@ -278,7 +278,7 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2 - 100),
                                        "Les scores finaux sont: ", fenetre, polices["moyenne"], )
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 4 * Constantes.TAILLE_FENETRE[1] // 5),
-                                       "* Appuyez sur ESPACE pour continuer, ECHAP pour quitter le jeu *", fenetre,
+                                       "* Appuyez sur ESPACE pour continuer, TAB pour finir la partie *", fenetre,
                                        polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, mises=mises)
     Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3 - 100),
@@ -286,6 +286,7 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
     Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores)
     Fonctions_pygame.creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, scores)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+    Fonctions_pygame.pygame_bool_input()
 
 
 #########################          C - Intelligence artificielle          #########################
@@ -438,12 +439,13 @@ def affichage_fin_de_jeu(kopecs, nb_parties, fenetre, polices, scores, mises):
         difference[joueur] = kopecs[joueur] - 100
     diff = sorted(difference.items(), key=lambda t: t[1],
                   reverse=True)  # trie le dictionnaire et rend une liste de couples
+    fenetre.fill(Constantes.VERT_BLACKJACK)
     if nb_parties == 1:
         print("\nSur la partie :")
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur la partie", fenetre, polices["moyenne"])
     else:
         print("\nSur l'ensemble des", nb_parties, "parties :")
-        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur l'ensemble des" + str(nb_parties) + "parties :", fenetre, polices["moyenne"])
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur l'ensemble des " + str(nb_parties) + " parties :", fenetre, polices["moyenne"])
     for couple in diff:
         if couple[1] == -100:
             print(couple[0], "a tout perdu")
@@ -467,12 +469,13 @@ def affichage_fin_de_jeu(kopecs, nb_parties, fenetre, polices, scores, mises):
             Fonctions_pygame.creer_boite_texte(
                 ((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
                  2 * Constantes.TAILLE_FENETRE[1] // 3),
-                "(+" + str(abs(difference[nom_joueur]) - mises[nom_joueur]) + ")",
+                "(+" + str(abs(difference[nom_joueur])) + ")",
                 fenetre, polices[taille_police], couleur_texte=couleur_texte)
         else:
             couleur_texte = Constantes.ROUGE
             Fonctions_pygame.creer_boite_texte(
                 ((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
-                 2 * Constantes.TAILLE_FENETRE[1] // 3), "(-" + str(mises[nom_joueur]) + ")", fenetre,
+                 2 * Constantes.TAILLE_FENETRE[1] // 3), "(-" + str(abs(difference[nom_joueur])) + ")", fenetre,
                 polices[taille_police], couleur_texte=couleur_texte)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
+    Fonctions_pygame.fin_partie()
