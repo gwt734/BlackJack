@@ -18,13 +18,14 @@ def initialisation_fenetre():
                "moyenne": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_MOYENNE),
                "grande": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_GRANDE)}
     fenetre.fill(Constantes.VERT_BLACKJACK)
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Bienvenue dans cette partie de", fenetre,
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
+                      "Bienvenue dans cette partie de", fenetre,
                       polices["moyenne"])
     creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2), "BLACKJACK", fenetre,
                       polices["grande"], couleur_texte=Constantes.OR)
     creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 4 * Constantes.TAILLE_FENETRE[1] // 5),
-                                       "* Appuyez sur ESPACE pour commencer *", fenetre,
-                                       polices["petite"], couleur_texte=Constantes.GRIS)
+                      "* Appuyez sur ESPACE pour commencer *", fenetre,
+                      polices["petite"], couleur_texte=Constantes.GRIS)
     mise_a_jour_affichage(fenetre, polices)
     pygame_bool_input()
     return fenetre, polices
@@ -34,7 +35,7 @@ def pygame_bool_input():
     """Fonction qui attends une touche de l'utilisateur et retourne vrai si ESPACE est touché et faux si TAB est touché."""
     while True:
         for evenement in pygame.event.get():  # Parcours tous les évenements recus depuis le dernier tick
-            if evenement.type == pygame.KEYDOWN:   #
+            if evenement.type == pygame.KEYDOWN:  #
 
                 if evenement.key == pygame.K_ESCAPE:
                     pygame.quit()
@@ -137,7 +138,10 @@ def creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j=-1, mi
             couleur_texte = Constantes.GRIS
         else:
             couleur_texte = Constantes.BLANC
-        creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs+1))*(index_joueur+1), Constantes.TAILLE_FENETRE[1] // 2), "*"*(j == nom_joueur)+nom_joueur+" : "+str(scores[nom_joueur])+"*"*(j == nom_joueur), fenetre, polices[taille_police], couleur_texte=couleur_texte)
+        creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
+                           Constantes.TAILLE_FENETRE[1] // 2),
+                          "*" * (j == nom_joueur) + nom_joueur + " : " + str(scores[nom_joueur]) + "*" * (
+                                      j == nom_joueur), fenetre, polices[taille_police], couleur_texte=couleur_texte)
 
 
 def creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores):
@@ -149,7 +153,9 @@ def creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores):
     for index_joueur in range(nombre_de_joueurs):
         nom_joueur = joueurs_restants[index_joueur]
         taille_police = "moyenne"
-        creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs+1))*(index_joueur+1), 2*Constantes.TAILLE_FENETRE[1] // 3 - 50), nom_joueur+" : "+str(kopecs[nom_joueur]), fenetre, polices[taille_police])
+        creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
+                           2 * Constantes.TAILLE_FENETRE[1] // 3 - 50), nom_joueur + " : " + str(kopecs[nom_joueur]),
+                          fenetre, polices[taille_police])
 
 
 def creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, scores):
@@ -163,14 +169,19 @@ def creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, s
         taille_police = "moyenne"
         if nom_joueur == vainqueur:
             couleur_texte = Constantes.VERT
-            creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs+1))*(index_joueur+1), 2*Constantes.TAILLE_FENETRE[1] // 3), "(+" + str(gain-mises[nom_joueur]) + ")", fenetre, polices[taille_police], couleur_texte=couleur_texte)
+            creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
+                               2 * Constantes.TAILLE_FENETRE[1] // 3), "(+" + str(gain - mises[nom_joueur]) + ")",
+                              fenetre, polices[taille_police], couleur_texte=couleur_texte)
         else:
             couleur_texte = Constantes.ROUGE
-            creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs+1))*(index_joueur+1), 2*Constantes.TAILLE_FENETRE[1] // 3), "(-" + str(mises[nom_joueur]) + ")", fenetre, polices[taille_police], couleur_texte=couleur_texte)
+            creer_boite_texte(((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
+                               2 * Constantes.TAILLE_FENETRE[1] // 3), "(-" + str(mises[nom_joueur]) + ")", fenetre,
+                              polices[taille_police], couleur_texte=couleur_texte)
 
 
 def affichages_statiques(fenetre, polices):
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] * 0.07, Constantes.TAILLE_FENETRE[1] * 0.02), "ECHAP pour fermer", fenetre,
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] * 0.07, Constantes.TAILLE_FENETRE[1] * 0.02), "ECHAP pour fermer",
+                      fenetre,
                       polices["petite"])
 
 

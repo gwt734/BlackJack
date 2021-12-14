@@ -431,7 +431,7 @@ def fin_de_partie(kopecs, joueurs):
     return joueurs_partie
 
 
-def affichage_fin_de_jeu(kopecs, nb_parties):
+def affichage_fin_de_jeu(kopecs, nb_parties, fenetre, polices, scores, mises):
     """Affiche les résultats totaux après l'ensemble des parties"""
     difference = init_scores(kopecs.keys())
     for joueur in kopecs:
@@ -440,8 +440,10 @@ def affichage_fin_de_jeu(kopecs, nb_parties):
                   reverse=True)  # trie le dictionnaire et rend une liste de couples
     if nb_parties == 1:
         print("\nSur la partie :")
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur la partie", fenetre, polices["moyenne"])
     else:
         print("\nSur l'ensemble des", nb_parties, "parties :")
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur l'ensemble des" + str(nb_parties) + "parties :", fenetre, polices["moyenne"])
     for couple in diff:
         if couple[1] == -100:
             print(couple[0], "a tout perdu")
@@ -449,3 +451,28 @@ def affichage_fin_de_jeu(kopecs, nb_parties):
             print(couple[0], "a perdu", abs(couple[1]), "kopecs  (" + str(couple[1] + 100) + " restants)")
         else:
             print(couple[0], "a gagné", couple[1], "kopecs  (" + str(couple[1] + 100) + " restants)")
+    Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3 - 100),
+                                       "Les kopecs restants: ", fenetre, polices["moyenne"], )
+    Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores)
+    joueurs_restants = []
+    for joueur in scores.keys():
+        if kopecs[joueur] != 0 or mises[joueur] != 0:
+            joueurs_restants.append(joueur)
+    nombre_de_joueurs = len(joueurs_restants)
+    for index_joueur in range(nombre_de_joueurs):
+        nom_joueur = joueurs_restants[index_joueur]
+        taille_police = "moyenne"
+        if difference[nom_joueur] > 0:
+            couleur_texte = Constantes.VERT
+            Fonctions_pygame.creer_boite_texte(
+                ((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
+                 2 * Constantes.TAILLE_FENETRE[1] // 3),
+                "(+" + str(abs(difference[nom_joueur]) - mises[nom_joueur]) + ")",
+                fenetre, polices[taille_police], couleur_texte=couleur_texte)
+        else:
+            couleur_texte = Constantes.ROUGE
+            Fonctions_pygame.creer_boite_texte(
+                ((Constantes.TAILLE_FENETRE[0] // (nombre_de_joueurs + 1)) * (index_joueur + 1),
+                 2 * Constantes.TAILLE_FENETRE[1] // 3), "(-" + str(mises[nom_joueur]) + ")", fenetre,
+                polices[taille_police], couleur_texte=couleur_texte)
+    Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)

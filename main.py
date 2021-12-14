@@ -32,14 +32,14 @@ def main():
             print(joueurs_partie[0], "est le seul joueur en mesure de continuer, nous avons notre grand gagant !")
             fenetre.fill(Constantes.VERT_BLACKJACK)
             Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
-                                               joueurs_partie[0] + "est le seul joueur en mesure de continuer, nous avons notre grand gagant !", fenetre,
+                                               joueurs_partie[0] + " est le seul joueur en mesure de continuer, nous avons notre grand gagant !", fenetre,
                                                polices["moyenne"])
             Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
             Fonctions_pygame.fin_partie()
             break
 
         veut_rejouer = Fonctions.continuer_partie()
-    Fonctions.affichage_fin_de_jeu(kopecs, nb_parties)  # affichage récapitulatif des parties
+    Fonctions.affichage_fin_de_jeu(kopecs, nb_parties, fenetre, polices, scores, mises)  # affichage récapitulatif des parties
 
 
 if __name__ == '__main__':
