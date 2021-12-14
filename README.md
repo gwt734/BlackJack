@@ -10,7 +10,8 @@ Codage d'une version simplifiée du BlackJack avec une interface graphique et de
 4. **Fonctions_pygame :** Fichier où toutes les fonctions nécessaires à l'affichag graphique du jeu sont stockées;
 5. **README :** fichier de présentation ;
 6. **blackjack_start :** fichier qui permet de lancer le jeu ;
-7. **projet_blackjack_consignes :** Documents expliquant les objectifs du projet et donnant des pistes de résolution.
+7. **blackjack_start_alt :** alternative si le fichier précédent présente des erreurs ;
+8. **projet_blackjack_consignes :** Documents expliquant les objectifs du projet et donnant des pistes de résolution.
 
 ## Installation:
 Simple téléchargement de tous les fichiers en faisant attention à les laisser dans un même dossier.
@@ -20,7 +21,7 @@ Simple téléchargement de tous les fichiers en faisant attention à les laisser
 ## Exécution du jeu :
 Il existe différentes manières de lancer le jeu :
 * Dans un IDE python, exécuter le fichier main.py _(conseillé)_
-* Double click sur le fichier blackjack_start.bat (cette méthode reste grandement dépendante des version de programmes de l'appareil utilisé et risque de ne pas fonctionner partout)
+* Double click sur le fichier blackjack_start.bat (ou le fichier blackjack_start_alt.bat si vous obtennez des erreurs avec le premier) (cette méthode reste grandement dépendante des version de programmes de l'appareil utilisé et risque de ne pas fonctionner partout)
 * Dans l'invite de commandes Windows en naviguant dans le dossier où les fichiers du jeu sont enregistrés avec la commande cd puis en lançant le fichier avec la commande python3
   ```console
   cd %Chemin d'accès du dossier où les fichiers du jeux sont enregistrés%
