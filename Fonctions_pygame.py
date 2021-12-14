@@ -11,12 +11,13 @@ import Fonctions
 
 
 def initialisation_fenetre():
+    "Fonction permettant de créer la fenetre, les différentes polices, et affiche un message de bienvenue"
     pygame.init()
     fenetre = pygame.display.set_mode(Constantes.TAILLE_FENETRE)
     pygame.display.set_caption('BlackJack')
     polices = {"petite": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_PETITE),
                "moyenne": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_MOYENNE),
-               "grande": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_GRANDE)}
+               "grande": pygame.font.Font('freesansbold.ttf', Constantes.POLICE_TAILLE_GRANDE)}  # Créer les polices et les places dans un dictionnaire
     fenetre.fill(Constantes.VERT_BLACKJACK)
     creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3),
                       "Bienvenue dans cette partie de", fenetre,
@@ -52,6 +53,7 @@ def mise_a_jour_affichage(fenetre, polices):
 
 
 def creer_boite_texte(position, texte_a_afficher, fenetre, police, couleur_texte=Constantes.BLANC, couleur_fond=None):
+    """Simplifie l'ajout à l'affichage d'un texte en une seule ligne"""
     texte = police.render(texte_a_afficher, True, couleur_texte, couleur_fond)
     boite_texte = texte.get_rect()
     boite_texte.center = (position[0], position[1])
@@ -61,7 +63,7 @@ def creer_boite_texte(position, texte_a_afficher, fenetre, police, couleur_texte
 def texte_input(fenetre, polices, question, valeur_par_default="", avertissement="", affiche_scores=False, scores=None,
                 joueurs_partie=None, encore=None, kopecs=None, j=-1, taille_police=None, mises=None):
     """Fonction input adaptés à l'affichage graphique"""
-    if scores is None:
+    if scores is None:      # initialisation des variables par défault pour éviter les erreurs
         scores = {}
     if encore is None:
         encore = {}
@@ -87,7 +89,7 @@ def texte_input(fenetre, polices, question, valeur_par_default="", avertissement
     if affiche_scores:
         creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
     mise_a_jour_affichage(fenetre, polices)
-    while not valide:
+    while not valide:  # Tant que l'utilisateur n'a pas validé sa reponse on cherche parmis les événeent et même parmis les touches de l'utilisateur
         for evenement in pygame.event.get():
             if evenement.type == pygame.KEYDOWN:
                 if evenement.key == pygame.K_ESCAPE:

@@ -7,7 +7,7 @@ import Fonctions_pygame
 def main():
     fenetre, polices = Fonctions_pygame.initialisation_fenetre()
     nb_joueurs = Fonctions.input_protege(question="Combien de joueurs jouerons ? ", type_attendu=int,
-                                         range_or_list="range", intervalle_reponses_possibles=(2, 16), fenetre=fenetre,
+                                         range_or_list="range", intervalle_reponses_possibles=(2, 6), fenetre=fenetre,
                                          polices=polices, valeur_par_default=3)  # Demande le nombre de joueurs
     print()
     joueurs = Fonctions.init_joueurs(fenetre, polices, nb_joueurs)  # Créé la liste des joueurs

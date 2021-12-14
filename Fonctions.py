@@ -286,7 +286,6 @@ def partie_complete(fenetre, polices, joueurs, pioche, scores, encore, kopecs, m
     Fonctions_pygame.creer_boites_texte_kopecs(fenetre, polices, kopecs, mises, scores)
     Fonctions_pygame.creer_boites_texte_gains(fenetre, polices, kopecs, vainqueur, gain, mises, scores)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
-    Fonctions_pygame.pygame_bool_input()
 
 
 #########################          C - Intelligence artificielle          #########################
@@ -358,6 +357,8 @@ def input_protege(question="", type_attendu=str, range_or_list="none", intervall
                   avertissement="", affiche_scores=False, encore=None, scores=None, kopecs=None, j=-1,
                   taille_police="moyenne", mises=None):
     """
+    Fonction qui permet d'effectuer des inputs sans risques d'erreur fatales au programme.
+    elle permet aussi de spécifier un type et un intervalle ou une liste de réponses possibles comme c'est souvent nécessaire
     question = question à poser (str)
     type_attendu = type de variable attendu (str par defaut)
     range_or_list = "range" pour un intervalle, "list" pour une liste de valeur, rien pour ignorer la condition
@@ -442,10 +443,10 @@ def affichage_fin_de_jeu(kopecs, nb_parties, fenetre, polices, scores, mises):
     fenetre.fill(Constantes.VERT_BLACKJACK)
     if nb_parties == 1:
         print("\nSur la partie :")
-        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur la partie", fenetre, polices["moyenne"])
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur la partie", fenetre, polices["grande"])
     else:
         print("\nSur l'ensemble des", nb_parties, "parties :")
-        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur l'ensemble des " + str(nb_parties) + " parties :", fenetre, polices["moyenne"])
+        Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Sur l'ensemble des " + str(nb_parties) + " parties :", fenetre, polices["grande"])
     for couple in diff:
         if couple[1] == -100:
             print(couple[0], "a tout perdu")
