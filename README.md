@@ -7,9 +7,10 @@ Codage d'une version simplifiée du BlackJack avec une interface graphique et de
 1. **main :** Programme principal où le jeu se lance ;
 2. **Fonctions :** Fichier où toutes les fonctions nécessaires au jeu sont stockées ;
 3. **Constantes :** Variables utiles qui ne changent pas durant l'exécution ;
-4. **README :** fichier de présentation ;
-5. **blackjack_start :** fichier qui permet de lancer le jeu ;
-6. **projet_blackjack_consignes :** Documents expliquant les objectifs du projet et donnant des pistes de résolution.
+4. **Fonctions_pygame :** Fichier où toutes les fonctions nécessaires à l'affichag graphique du jeu sont stockées;
+5. **README :** fichier de présentation ;
+6. **blackjack_start :** fichier qui permet de lancer le jeu ;
+7. **projet_blackjack_consignes :** Documents expliquant les objectifs du projet et donnant des pistes de résolution.
 
 ## Installation:
 Simple téléchargement de tous les fichiers en faisant attention à les laisser dans un même dossier.
