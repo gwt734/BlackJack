@@ -21,8 +21,8 @@ def initialisation_fenetre():
     creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 3), "Bienvenue dans cette partie de", fenetre,
                       polices["moyenne"])
     creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, Constantes.TAILLE_FENETRE[1] // 2), "BLACKJACK", fenetre,
-                      polices["grande"], couleur_texte=Constantes.ROUGE)
-    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 3 * Constantes.TAILLE_FENETRE[1] // 4),
+                      polices["grande"], couleur_texte=Constantes.OR)
+    creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 4 * Constantes.TAILLE_FENETRE[1] // 5),
                                        "* Appuyez sur ESPACE pour commencer *", fenetre,
                                        polices["petite"], couleur_texte=Constantes.GRIS)
     mise_a_jour_affichage(fenetre, polices)
