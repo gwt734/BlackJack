@@ -352,3 +352,4 @@ def affichage_fin_de_jeu(kopecs, nb_parties):
             print(couple[0], "a perdu", abs(couple[1]), "kopecs  ("+str(couple[1]+100)+" restants)")
         else:
             print(couple[0], "a gagné", couple[1], "kopecs  ("+str(couple[1]+100)+" restants)")
+    print("\nMerci d'avoir joué au Blackjack !")
