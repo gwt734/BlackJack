@@ -29,5 +29,5 @@ def main():
     Fonctions.affichage_fin_de_jeu(kopecs, nb_parties)  # affichage récapitulatif des parties
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # lancement du programme
     main()
