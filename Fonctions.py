@@ -193,7 +193,7 @@ def tour_joueur(fenetre, polices, j, joueurs_partie, pioche, scores, encore, kop
                                            polices["petite"], couleur_texte=Constantes.GRIS)
     else:
         Fonctions_pygame.creer_boite_texte((Constantes.TAILLE_FENETRE[0] // 2, 2 * Constantes.TAILLE_FENETRE[1] // 3),
-                                           "* " + j + " réfléchis *", fenetre,
+                                           "* " + j + " réfléchit *", fenetre,
                                            polices["petite"], couleur_texte=Constantes.GRIS)
     Fonctions_pygame.creer_boites_texte_scores(fenetre, polices, scores, encore, kopecs, j, mises)
     Fonctions_pygame.mise_a_jour_affichage(fenetre, polices)
